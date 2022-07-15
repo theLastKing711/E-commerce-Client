@@ -1,0 +1,31 @@
+
+<div class="loading" *ngIf="loading">
+  <app-loading></app-loading>
+</div>
+
+<div class="container mt-4" *ngIf="! loading">
+
+  <div >
+    <button
+      mat-raised-button
+      color="primary"
+      class="mb-2"
+      (click)="openAddDialog('300ms', '300ms')">
+      Add Category
+    </button>
+  </div>
+
+  <app-categories-table [categoriesList]="categoriesList" [columnNames]="displayedColumns" (categoryRemoved)="removeCategory($event)"></app-categories-table>
+
+  <mat-paginator
+    [length]="totalCount"
+    [pageSize]="pageSize"
+    [pageSizeOptions]="[10]"
+    [pageIndex]="pageNumber - 1"
+    (page)="changePage($event)"
+    aria-label="Select page"
+  >
+</mat-paginator>
+
+</div>
+

@@ -1,0 +1,39 @@
+<header>
+  <mat-toolbar color="primary" class="app-header flex justify-content-between px-5">
+
+    <a class="app-header__title" [routerLink]="['/categories']">E-Commerce App</a>
+    <nav class="app-header__action">
+      <ul *ngIf="! isLoggedIn()" class="d-flex app-header__list">
+        <li>
+          <a [routerLink]="['/authentication/register']"  class="app-header__item">
+            <span >
+              register
+            </span>
+          </a>
+        </li>
+        <li>
+          <a [routerLink]="['/authentication/login']" class="app-header__item">
+            <span >
+              Login
+            </span>
+          </a>
+        </li>
+      </ul>
+      <ul *ngIf="isLoggedIn()" class="d-flex app-header__list">
+        <li>
+          <h2 class="app-header__item">
+            welcome:  {{ getLoggedUser() }}
+          </h2>
+        </li>
+        <li>
+          <a [routerLink]="['/authentication/register']" *ngIf="isLoggedIn()" class="app-header__item">
+            <span (click)="logout()">
+              Logout
+            </span>
+          </a>
+        </li>
+    </ul>
+  </nav>
+
+  </mat-toolbar>
+</header>

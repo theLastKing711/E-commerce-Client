@@ -1,0 +1,23 @@
+
+<div class="row">
+    <div *ngFor="let product of productsList" class="col-sm col-md-4 col-sm-6 mt-4">
+      <mat-card>
+        <div class="image-container">
+          <img class="product-image" [src]="imagesPath +  product.path" alt="product image">
+        </div>
+
+      <mat-card-content class="mt-2">
+        <h2>name: {{ product.name }}</h2>
+        <h3>price: {{ product.price }}S.P</h3>
+      </mat-card-content>
+      <mat-card-actions>
+        <a [routerLink]="['/products', product.id]">
+          <button mat-raised-button color="primary" class="w-100">Details</button>
+        </a>
+      </mat-card-actions>
+    </mat-card>
+
+    </div>
+</div>
+
+

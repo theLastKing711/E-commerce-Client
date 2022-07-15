@@ -1,0 +1,43 @@
+
+<div *ngIf="loading">
+  <app-loading></app-loading>
+</div>
+
+
+
+<div class="container mt-4" *ngIf="! loading">
+<form class="example-form" [formGroup]="categoryForm" (ngSubmit)="udpateCategory()">
+  <mat-card class="edit-category-card">
+    <mat-card-header class="d-block mb-5">
+      <h1>
+        Edit Category
+      </h1>
+      <hr />
+    </mat-card-header>
+    <mat-card-content class="mb-4">
+
+        <div class="row">
+          <div class="col-md-6">
+            <mat-form-field class="w-100" appearance="fill">
+              <mat-label>name</mat-label>
+              <input matInput formControlName="name">
+              <mat-error *ngIf="hasError()">Name is required</mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+
+    </mat-card-content>
+    <mat-card-actions>
+      <div class="d-flex justify-content-between">
+        <button mat-raised-button color="primary" class="py-1 px-5" type="submit" [disabled]="hasError()">submit</button>
+        <a  routerLink="/categories">
+          <button mat-stroked-button color="primary" class="py-1 px-5">cancel</button>
+        </a>
+      </div>
+
+    </mat-card-actions>
+  </mat-card>
+</form>
+
+
+</div>

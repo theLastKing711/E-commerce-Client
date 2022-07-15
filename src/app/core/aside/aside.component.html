@@ -1,0 +1,15 @@
+<aside class="app-aside">
+  <ul class="app-aside__list">
+
+    <li *ngFor="let route of routes">
+      <a
+        [routerLink]="[route.path]" class="app-aside__link d-block"
+        [ngClass]="{'route-active':route.name == activeRoute}"
+        (click)="updateActiveRoute(route.name)"
+      >
+        {{ route.name }}
+      </a>
+    </li>
+
+  </ul>
+</aside>

@@ -1,0 +1,57 @@
+<div>
+  <app-loading *ngIf="loading">
+
+  </app-loading>
+</div>
+
+<div *ngIf="!loading">
+  <h1 mat-dialog-title>Add New Product</h1>
+
+  <div mat-dialog-content>
+    <form class="example-form" [formGroup]="productForm" (ngSubmit)="addProduct()">
+
+      <mat-form-field appearance="fill">
+        <mat-label>name</mat-label>
+        <input matInput formControlName="name">
+        <mat-error *ngIf="hasError('name')">Name is required</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>price</mat-label>
+        <input matInput formControlName="price">
+        <mat-error *ngIf="hasError('price')">Price is required</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Filter By Category</mat-label>
+        <mat-select formControlName="categoryId">
+          <mat-option *ngFor="let category of categoriesList" [value]="category.id">
+            {{ category.name }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="hasError('categoryId')">Category is required</mat-error>
+      </mat-form-field>
+
+      <div class="mb-4">
+        <mat-label>Product Image:</mat-label>
+        <input type="file" (change)="uploadFile($event)" class="mt-2" />
+        <!-- <mat-error *ngIf="fileIsEmpty()" class="mt-1">Category Image is required</mat-error> -->
+      </div>
+
+    </form>
+  </div>
+
+  <div mat-dialog-actions>
+    <button
+      mat-button
+      mat-dialog-close color="primay"
+      type="submit"
+      (click)="addProduct()"
+      [disabled]="formNotValid()"
+    >
+    Submit
+  </button>
+
+    <button mat-button mat-dialog-close color="success" >Cancel</button>
+  </div>
+</div>
