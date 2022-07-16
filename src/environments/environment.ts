@@ -5,7 +5,7 @@
 export const environment = {
   production: false,
   base_url: "https://e-commerce-api1.herokuapp.com/api/",
-  imagesPath: "https://e-commerce-api1.herokuapp.com/weatherforecast/images/"
+  imagesPath: "https://e-commerce-api1.herokuapp.com/api/images/"
   // base_url: "https://localhost:7267/api/",
   // imagesPath: "https://localhost:7267/images/"
 };
