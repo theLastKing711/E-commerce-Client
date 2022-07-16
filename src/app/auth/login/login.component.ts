@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { StorageService } from './../../service/storage.service';
 import { AuthService } from './../../services/auth.service';
 import { ILogin } from './../../../types/auth';
@@ -24,6 +25,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     ) { }
 
   ngOnInit(): void {
+
   }
 
   loginForm = new FormGroup({
