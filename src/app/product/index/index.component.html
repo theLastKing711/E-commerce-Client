@@ -18,7 +18,7 @@
     </button>
     <mat-form-field appearance="fill">
       <mat-label>Filter By Category</mat-label>
-      <mat-select (selectionChange)="filterProducts($event)">
+      <mat-select (selectionChange)="filterProducts($event)" [value]="categoryId">
         <mat-option [value]="0">None</mat-option>
         <mat-option *ngFor="let category of CategoriesSelectList" [value]="category.id">
           {{ category.name }}

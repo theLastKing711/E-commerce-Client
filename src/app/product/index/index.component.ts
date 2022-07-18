@@ -26,6 +26,7 @@ export class IndexComponent implements OnInit, OnDestroy {
   pageNumber: number = 1;
   pageSize: number = 9;
   totalCount!: number;
+  categoryId: number = 0;
 
   loading: boolean = false;
 
@@ -84,6 +85,9 @@ export class IndexComponent implements OnInit, OnDestroy {
   filterProducts(e: MatSelectChange){
 
     const categoryId = e.value
+    this.categoryId = categoryId;
+
+    alert(this.categoryId)
 
     if(categoryId == 0) {
       this.getProducts(1, this.pageSize)
