@@ -87,8 +87,6 @@ export class IndexComponent implements OnInit, OnDestroy {
     const categoryId = e.value
     this.categoryId = categoryId;
 
-    alert(this.categoryId)
-
     if(categoryId == 0) {
       this.getProducts(1, this.pageSize)
     }
