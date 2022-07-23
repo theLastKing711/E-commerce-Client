@@ -1,3 +1,4 @@
+import { PaginationService } from './../../services/pagination.service';
 import { AlertifyService } from './../../services/alertify.service';
 import { DialogService } from './../../services/dialog.service';
 import { AddCategoryDialogComponent } from './../add-category-dialog/add-category-dialog.component';
@@ -34,7 +35,8 @@ export class IndexComponent implements OnInit, OnDestroy {
       private categoryService: CategoryService,
       public dialog: MatDialog,
       private dialogService :DialogService,
-      private alertifyService: AlertifyService
+      private alertifyService: AlertifyService,
+      private paginationService: PaginationService
     ) { }
 
   ngOnInit(): void {
@@ -73,9 +75,18 @@ export class IndexComponent implements OnInit, OnDestroy {
   }
 
   removeCategory(id: number) {
+
+
     this.categoryService.removeCategory(id)
                         .pipe(switchMap(
                                 () => {
+
+                                  if(this.paginationService.notFirstPage(this.pageNumber) && this.paginationService.pageEnded(this.totalCount, this.pageSize))
+                                  {
+                                    alert("laksjd")
+                                    return this.categoryService.getCategories(this.pageNumber - 1, this.pageSize)
+                                  }
+
                                   return this.categoryService.getCategories(this.pageNumber, this.pageSize)
                                 })
                         )
