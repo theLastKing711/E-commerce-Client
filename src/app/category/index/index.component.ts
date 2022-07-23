@@ -83,7 +83,6 @@ export class IndexComponent implements OnInit, OnDestroy {
 
                                   if(this.paginationService.notFirstPage(this.pageNumber) && this.paginationService.pageEnded(this.totalCount, this.pageSize))
                                   {
-                                    alert("laksjd")
                                     return this.categoryService.getCategories(this.pageNumber - 1, this.pageSize)
                                   }
 
