@@ -1,0 +1,30 @@
+
+
+<div class="loading" *ngIf="loading">
+  <app-loading></app-loading>
+</div>
+
+
+<div class="container mt-4" *ngIf="!loading">
+
+
+  <app-invoices-table
+    [invoicesList]="invoicesList"
+    [columnNames]="displayedColumns"
+    [invoiceDetailsColumns]="invoiceDetailsColumns"
+  >
+  </app-invoices-table>
+
+  <mat-paginator
+    [length]="totalCount"
+    [pageSize]="pageSize"
+    [pageSizeOptions]="[pageSize]"
+    (page)="changePage($event)"
+    [pageIndex]="pageNumber - 1"
+    aria-label="Select page"
+    class="mt-2 mb-3"
+  >
+  </mat-paginator>
+
+</div>
+

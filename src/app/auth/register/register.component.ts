@@ -1,4 +1,3 @@
-import { StorageService } from './../../service/storage.service';
 import { IRegister } from './../../../types/auth';
 import { Subscription } from 'rxjs';
 import { AuthService } from './../../services/auth.service';

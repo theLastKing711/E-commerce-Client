@@ -1,5 +1,4 @@
 import { HttpClient } from '@angular/common/http';
-import { StorageService } from './../../service/storage.service';
 import { AuthService } from './../../services/auth.service';
 import { ILogin } from './../../../types/auth';
 import { Component, OnInit, OnDestroy } from '@angular/core';
@@ -7,6 +6,7 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AlertifyService } from 'src/app/services/alertify.service';
+import { StorageService } from 'src/app/services/storage.service';
 
 @Component({
   selector: 'app-login',

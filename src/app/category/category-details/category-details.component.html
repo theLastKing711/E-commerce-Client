@@ -28,11 +28,14 @@
 
     </mat-card-content>
     <mat-card-actions>
-      <div class="d-flex justify-content-between">
+      <div class="d-flex justify-content-between card-actions">
         <button mat-raised-button color="primary" class="py-1 px-5" type="submit" [disabled]="hasError()">submit</button>
-        <a  routerLink="/categories">
-          <button mat-stroked-button color="primary" class="py-1 px-5">cancel</button>
-        </a>
+
+          <button mat-stroked-button color="primary" class="m-0 p-0" type="button">
+            <a  routerLink="/categories" class="d-block py-1 px-5 ">
+              cancel
+            </a>
+          </button>
       </div>
 
     </mat-card-actions>

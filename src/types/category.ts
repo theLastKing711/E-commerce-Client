@@ -12,3 +12,8 @@ export interface Category extends CategoryBase {
 export interface AddCategory extends CategoryBase {
 
 }
+
+
+
+export interface CategoryItemDto extends CategoryBase {
+}

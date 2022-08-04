@@ -2,8 +2,43 @@
   <mat-toolbar color="primary" class="app-header flex justify-content-between px-5">
 
     <a class="app-header__title" [routerLink]="['/categories']">E-Commerce App</a>
+
+    <div class="search-items">
+      <input (input)="searchItems($event)"
+             class="search-items__input"
+             placeholder="Type here to search"
+             (focus)="searchItems($event)"
+             (blur)="onBlur($event)"
+             />
+      <div class="search-items__container">
+        <ul class="search-items__list">
+          <li *ngIf="categorySearchList" class="text-start search-items__inner-list">
+            Categories
+            <ul class="search-items__list">
+              <li *ngFor="let category of categorySearchList">
+                <a class="search-items__item" [routerLink]="['/categories', category.id]" >
+                  {{ category.name }}
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li *ngIf="productsSearchList" class="text-start search-items__inner-list">
+            Products
+            <ul class="search-items__list">
+              <li *ngFor="let product of productsSearchList">
+                <a class="search-items__item" [routerLink]="['/products', product.id]">
+                  {{ product.name }}
+               </a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+
     <nav class="app-header__action">
-      <ul *ngIf="! isLoggedIn()" class="d-flex app-header__list">
+      <ul *ngIf="! isLoggedIn()" class="d-flex app-header__list gap-4">
+
         <li>
           <a [routerLink]="['/authentication/register']"  class="app-header__item">
             <span >
@@ -19,7 +54,8 @@
           </a>
         </li>
       </ul>
-      <ul *ngIf="isLoggedIn()" class="d-flex app-header__list">
+
+      <ul *ngIf="isLoggedIn()" class="d-flex app-header__list gap-4">
         <li>
           <h2 class="app-header__item">
             welcome:  {{ getLoggedUser() }}
@@ -32,7 +68,8 @@
             </span>
           </a>
         </li>
-    </ul>
+      </ul>
+
   </nav>
 
   </mat-toolbar>

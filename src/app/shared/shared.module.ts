@@ -13,6 +13,7 @@ import {MatPaginatorModule} from '@angular/material/paginator';
 import {MatCardModule} from '@angular/material/card';
 import {MatSelectModule} from '@angular/material/select';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import {MatCheckboxModule} from '@angular/material/checkbox';
 import { LoadingComponent } from './loading/loading.component';
 
 @NgModule({
@@ -33,6 +34,7 @@ import { LoadingComponent } from './loading/loading.component';
     MatSelectModule,
     RouterModule,
     MatProgressSpinnerModule,
+    MatCheckboxModule
   ],
   exports: [
     MatToolbarModule,
@@ -47,7 +49,8 @@ import { LoadingComponent } from './loading/loading.component';
     MatSelectModule,
     RouterModule,
     MatProgressSpinnerModule,
-    LoadingComponent
+    LoadingComponent,
+    MatCheckboxModule
   ]
 })
 export class SharedModule { }

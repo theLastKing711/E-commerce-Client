@@ -13,7 +13,7 @@
 
           <mat-card-header class="d-block mb-5">
             <h1>
-              Edit Category
+              Edit Product
             </h1>
             <hr />
           </mat-card-header>
@@ -55,21 +55,31 @@
                 <input type="file" (change)="uploadFile($event)" class="mt-2" />
                 <img [src]="imgUrl || (imagesPath + product.path)" alt="product image" class="mt-2 w-100 product-image"/>
               </div>
+
+              <div class="mb-4 col-md-4 mt-2">
+                <section class="example-section">
+                  <mat-checkbox class="example-margin" formControlName="isPopular" color="primary">Is isPopular</mat-checkbox>
+                </section>
+              </div>
+
           </div>
 
           </mat-card-content>
 
           <mat-card-actions>
 
-            <div class="d-flex justify-content-between">
+            <div class="d-flex justify-content-between card-actions">
               <button mat-raised-button color="primary" class="py-1 px-5" type="submit" [disabled]="formNotValid()">submit</button>
-              <div>
+              <div class="d-flex card-actions">
                 <button type="button" mat-raised-button color="warn" class="py-1 px-5 delete-button" (click)="revmoeProduct(id)">delete</button>
-                <a  routerLink="/products">
-                  <button mat-stroked-button color="primary" class="py-1 px-5">cancel</button>
-                </a>
+
+                <button mat-stroked-button color="primary" class="m-0 p-0" type="button">
+                  <a  routerLink="/products" class="d-block py-1 px-5 ">
+                    cancel
+                  </a>
+                </button>
               </div>
-              </div>
+            </div>
           </mat-card-actions>
 
         </mat-card>

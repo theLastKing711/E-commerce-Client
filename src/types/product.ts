@@ -3,6 +3,7 @@ import { Base } from "./base";
 
 export interface ProductBase extends Base {
   name: string,
+  isPopular: boolean
 }
 
 export interface Product extends ProductBase {
@@ -15,5 +16,26 @@ export interface Product extends ProductBase {
 
 
 export interface AddProduct extends ProductBase {
+
+}
+
+export interface ProductItemDto {
+  id: number,
+  name: string,
+  path: string
+}
+
+export interface TopSellerProductDto {
+  Id: number,
+  name: string,
+  total: number
+
+}
+
+
+export interface TopSellerCategoryDto {
+  Id: number,
+  name: string,
+  total: number
 
 }

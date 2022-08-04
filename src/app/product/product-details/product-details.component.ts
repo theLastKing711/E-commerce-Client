@@ -42,6 +42,7 @@ export class ProductDetailsComponent implements OnInit, OnDestroy {
     name: new FormControl('', Validators.required),
     price: new FormControl(0, Validators.required),
     categoryId: new FormControl(0, Validators.required),
+    isPopular: new FormControl(false, Validators.required),
     image: new FormControl('', Validators.required)
   });
 
@@ -64,7 +65,8 @@ export class ProductDetailsComponent implements OnInit, OnDestroy {
         name: this.product.name,
         price: this.product.price,
         categoryId: this.product.categoryId,
-        image: this.product.path
+        image: this.product.path,
+        isPopular: this.product.isPopular
 
       })
       this.loading = false;
@@ -107,6 +109,9 @@ export class ProductDetailsComponent implements OnInit, OnDestroy {
 
      const image = form.get('image')?.value!;
 
+     const isPopular = form.get('isPopular')?.value!;
+
+
 
      formData.append("id", this.id.toString());
 
@@ -118,7 +123,12 @@ export class ProductDetailsComponent implements OnInit, OnDestroy {
 
      formData.append('image', image);
 
+     formData.append('isPopular', isPopular.toString());
+
      this.loading = true;
+
+     console.log("isPopular", isPopular);
+
 
 
      this. updateProductSubscription = this.productService.updateProduct(formData, this.id)

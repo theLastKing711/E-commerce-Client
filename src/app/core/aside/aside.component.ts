@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-
+import { Subscription } from 'rxjs';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 
 
 
@@ -10,17 +11,30 @@ import { Component, OnInit } from '@angular/core';
 })
 
 
-export class AsideComponent implements OnInit {
+export class AsideComponent implements OnInit, OnDestroy {
 
-  activeRoute: string = "Categories"
-  routes: {name: string, path: string}[] = [
-    {name: "Categories", path: "/categories"},
-    {name: "Products", path: "/products"}
-  ];
+   routerSubscription!: Subscription;
 
-  constructor() { }
+    activeRoute!: string;
+    routes: {name: string, path: string}[] = [
+      {name: "categories", path: "/categories"},
+      {name: "products", path: "/products"},
+      {name: "invoices", path: "/invoices"},
+      {name: "stats", path: "/stats"}
+    ];
+
+  constructor(private router: Router, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
+
+    this.routerSubscription = this.router.events.subscribe(event => {
+      if(event instanceof NavigationEnd)
+      {
+        const mainPath = "/" + event.url.split('/')[1]
+        this.activeRoute = mainPath;
+      }
+    })
+
   }
 
 
@@ -28,5 +42,11 @@ export class AsideComponent implements OnInit {
     this.activeRoute = route;
   }
 
+  ngOnDestroy(): void {
+      if(this.routerSubscription)
+      {
+        this.routerSubscription.unsubscribe();
+      }
+  }
 
 }

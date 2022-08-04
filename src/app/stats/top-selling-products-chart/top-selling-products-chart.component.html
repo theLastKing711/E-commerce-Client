@@ -1,0 +1,22 @@
+
+
+<div class="card mt-4" #TopProductsCardRef>
+  <h2 class="card-header">
+    Top Selling Products
+  </h2>
+
+    <ngx-charts-pie-chart
+      [view]="view"
+      [results]="topSellingProductsData"
+      (window:resize)="onResize(TopProductsCardRef)"
+      [gradient]="gradient"
+      [legend]="false"
+      [labels]="showLabels"
+      [doughnut]="isDoughnut"
+      (select)="onSelect($event)"
+      (activate)="onActivate($event)"
+      (deactivate)="onDeactivate($event)"
+
+    >
+  </ngx-charts-pie-chart>
+</div>

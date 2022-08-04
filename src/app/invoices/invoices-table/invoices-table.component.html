@@ -1,0 +1,83 @@
+<table mat-table [dataSource]="invoicesList" class="mat-elevation-z8" multiTemplateDataRows>
+
+  <!--- Note that these columns can be defined in any order.
+        The actual rendered columns are set as a property on the row definition" -->
+
+  <!-- Id Column -->
+  <ng-container matColumnDef="id">
+    <th mat-header-cell *matHeaderCellDef> Id </th>
+    <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+  </ng-container>
+
+  <!-- Total  -->
+  <ng-container matColumnDef="total">
+    <th mat-header-cell *matHeaderCellDef> Total </th>
+    <td mat-cell *matCellDef="let element"> {{element.total}} </td>
+  </ng-container>
+
+  <!-- createdAt Column -->
+  <ng-container matColumnDef="createdAt">
+    <th mat-header-cell *matHeaderCellDef> Date Created </th>
+    <td mat-cell *matCellDef="let element"> {{element.createdAt | date: 'y' || null}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="details">
+    <th mat-header-cell *matHeaderCellDef> Details </th>
+    <td mat-cell *matCellDef="let element">
+      <a [routerLink]="['/categories', element.id]" class="icon-container">
+        <mat-icon color="red">
+          remove_red_eye
+        </mat-icon>
+      </a>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="delete">
+    <th mat-header-cell *matHeaderCellDef></th>
+    <td mat-cell *matCellDef="let element">
+      <span (click)="removeInvoice(element.id)" class="icon-container">
+        <mat-icon class="delete-icon">
+          delete
+        </mat-icon>
+    </span>
+
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="expand">
+    <th mat-header-cell *matHeaderCellDef aria-label="row actions">&nbsp;</th>
+    <td mat-cell *matCellDef="let element">
+      <button mat-icon-button aria-label="expand row" (click)="(expandedElement = expandedElement === element ? null : element); $event.stopPropagation()">
+        <mat-icon *ngIf="expandedElement !== element">keyboard_arrow_down</mat-icon>
+        <mat-icon *ngIf="expandedElement === element">keyboard_arrow_up</mat-icon>
+      </button>
+    </td>
+  </ng-container>
+
+
+  <ng-container matColumnDef="expandedDetail">
+
+    <td mat-cell *matCellDef="let element" [attr.colspan]="columnNames.length">
+
+      <div *ngIf="element == expandedElement">
+          <app-invoice-details-table
+          [invoiceDetailsColumns]="invoiceDetailsColumns"
+          [invoiceDetailsList]="element.invoicesDetails">
+        </app-invoice-details-table>
+      </div>
+
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="columnNames"></tr>
+  <tr mat-row *matRowDef="let element; columns: columnNames;"
+      class="example-element-row"
+      [class.example-expanded-row]="expandedElement === element"
+      (click)="expandedElement = expandedElement === element ? null : element">
+  </tr>
+  <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="expanded-row"></tr>
+
+
+</table>
+
+
