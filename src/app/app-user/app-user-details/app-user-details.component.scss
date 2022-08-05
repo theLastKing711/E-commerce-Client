@@ -1,0 +1,39 @@
+.edit-product-card {
+  margin-bottom: 1rem;
+}
+
+
+
+.mat-form-field {
+  margin-bottom: 1rem;
+  display: block;
+}
+
+.product-image {
+  height: 250px;
+  object-fit: cover;
+}
+
+.delete-button {
+  margin-right: 1rem !important;
+}
+
+
+.card-actions {
+  @media screen and (max-width: 600px) {
+    flex-direction: column;
+
+    > button {
+      margin: 0.5rem 0 !important;
+
+    }
+
+  }
+
+  a {
+    text-decoration: none;
+
+  }
+
+
+}

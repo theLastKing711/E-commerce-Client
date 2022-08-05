@@ -1,4 +1,4 @@
-import { Customer } from './customer';
+import { AppUser } from './appUser';
 import { Product } from 'src/types/product';
 import { Base } from "./base";
 
@@ -17,7 +17,7 @@ export interface InvoiceDetails extends Base {
   invoiceId: number;
   product: Product;
   productId: number;
-  customer : Customer;
-  customerId: number;
+  appUser : AppUser;
+  AppUserId: number;
   productQuantity: number;
 }

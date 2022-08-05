@@ -1,0 +1,78 @@
+
+<div class="loading" *ngIf="loading">
+  <app-loading></app-loading>
+</div>
+
+
+<div *ngIf="!loading">
+
+  <form [formGroup]="appUserForm" (ngSubmit)="updatAppUser()">
+
+    <div class="container mt-4">
+        <mat-card class="edit-AppUser-card">
+
+          <mat-card-header class="d-block mb-5">
+            <h1>
+              Edit User
+            </h1>
+            <hr />
+          </mat-card-header>
+
+          <mat-card-content class="mb-4">
+
+          <div class="row">
+
+              <div class="col-md-4 col-sm-6">
+                <mat-form-field appearance="fill">
+                  <mat-label>Username</mat-label>
+                  <input matInput formControlName="username">
+                  <mat-error *ngIf="hasError('name')">Username is required</mat-error>
+                </mat-form-field>
+              </div>
+
+
+              <div class="col-md-4 col-sm-6">
+                <mat-form-field appearance="fill">
+                  <mat-label>email</mat-label>
+                  <input matInput formControlName="email">
+                  <mat-error *ngIf="hasError('email')">Username is required</mat-error>
+                </mat-form-field>
+              </div>
+
+              <div class="col-md-4 col-sm-6">
+                <mat-form-field appearance="fill">
+                  <mat-label>password</mat-label>
+                  <input matInput formControlName="password" type="password">
+                </mat-form-field>
+              </div>
+
+              <div class="mb-4 col-md-4">
+                <mat-label>User Image: </mat-label>
+                <input type="file" (change)="uploadFile($event)" class="mt-2" />
+                <img [src]="imgUrl || (imagesPath + appUser.imagePath)" alt="AppUser image" class="mt-2 w-100 AppUser-image"/>
+              </div>
+
+          </div>
+
+          </mat-card-content>
+
+          <mat-card-actions>
+
+            <div class="d-flex justify-content-between card-actions">
+              <button mat-raised-button color="primary" class="py-1 px-5" type="submit" [disabled]="formNotValid()">submit</button>
+              <div class="d-flex card-actions">
+                <button type="button" mat-raised-button color="warn" class="py-1 px-5 delete-button" (click)="removeAppUser(id)">delete</button>
+
+                <button mat-stroked-button color="primary" class="m-0 p-0" type="button">
+                  <a  routerLink="/AppUsers" class="d-block py-1 px-5 ">
+                    cancel
+                  </a>
+                </button>
+              </div>
+            </div>
+          </mat-card-actions>
+
+        </mat-card>
+    </div>
+  </form>
+</div>

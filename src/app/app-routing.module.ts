@@ -1,3 +1,4 @@
+import { AppUserModule } from './app-user/app-user.module';
 import { AuthGuard } from './auth/auth.guard';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
@@ -7,6 +8,11 @@ const routes: Routes = [
     path: '',
     redirectTo: '/categories',
     pathMatch: 'full'
+  },
+  {
+    path: 'users',
+    loadChildren: () => import('./app-user/app-user.module').then(m => m.AppUserModule),
+    canActivate: [AuthGuard]
   },
   {
     path: 'categories',

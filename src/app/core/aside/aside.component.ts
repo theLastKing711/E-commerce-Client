@@ -17,10 +17,11 @@ export class AsideComponent implements OnInit, OnDestroy {
 
     activeRoute!: string;
     routes: {name: string, path: string}[] = [
+      {name: "users", path: "/users"},
       {name: "categories", path: "/categories"},
       {name: "products", path: "/products"},
       {name: "invoices", path: "/invoices"},
-      {name: "stats", path: "/stats"}
+      {name: "stats", path: "/stats"},
     ];
 
   constructor(private router: Router, private route: ActivatedRoute) { }
