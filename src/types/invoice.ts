@@ -6,7 +6,7 @@ export interface InvoiceBase {
   appUserId: number;
 }
 
-export interface InvoiceDetailsBase extends Base {
+export interface InvoiceDetailsBase {
   productId: number;
   productQuantity: number
 }

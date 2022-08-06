@@ -1,15 +1,28 @@
 <header>
   <mat-toolbar color="primary" class="app-header flex justify-content-between px-5">
 
-    <a class="app-header__title" [routerLink]="['/categories']">E-Commerce App</a>
+    <div class="justify-content-between align-items-center d-flex mobile-nav-container">
+      <button mat-icon-button  aria-label="icon-button with menu icon" (click)="openMobileNavigation()" class="mobile-menu-button" >
+        <mat-icon>menu</mat-icon>
+      </button>
+      <a class="app-header__title" [routerLink]="['/categories']">E-Commerce App</a>
 
-    <div class="search-items">
+    </div>
+
+
+    <div class="d-flex justify-content-between p-10 align-items-center navigation w-100 flex-1" [ngClass]="{'mobile-navigation':isMobileNavOpen(), 'navigation': !isMobileNavOpen()}">
+
+      <button mat-icon-button  aria-label="icon-button with menu icon" (click)="openMobileNavigation()" class="close-mobile-menu-button align-self-end" *ngIf="isMobileNavOpen()">
+        <mat-icon>close icon</mat-icon>
+      </button>
+
+    <div class="search-items" *ngIf="isLoggedIn()">
       <input (input)="searchItems($event)"
              class="search-items__input"
              placeholder="Type here to search"
              (focus)="searchItems($event)"
              (blur)="onBlur($event)"
-             />
+      />
       <div class="search-items__container">
         <ul class="search-items__list">
           <li *ngIf="categorySearchList" class="text-start search-items__inner-list">
@@ -70,7 +83,10 @@
         </li>
       </ul>
 
-  </nav>
+      </nav>
+
+    </div>
+
 
   </mat-toolbar>
 </header>

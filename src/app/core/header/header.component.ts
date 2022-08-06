@@ -15,6 +15,8 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 })
 export class HeaderComponent implements OnInit, OnDestroy {
 
+  isMobileeNavOpen: boolean = false;
+
   query!: string;
   productsSearchList!: ProductItemDto[];
   categorySearchList!: CategoryItemDto[];
@@ -34,8 +36,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.headerBackDropService.activateBackDrop();
 
     const query = e.target.value;
-    // console.log("query", query)
-    // this.query = query;
+
+
     this.searchSubscrption = this.statsService.searchItems(query)
                                               .subscribe(searchResult => {
                                                 console.log("search result", searchResult);
@@ -44,8 +46,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
                                               })
   }
 
-  test() {
-  }
 
   onBlur(e: any)
   {
@@ -66,6 +66,14 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.storageService.removeFromStorage("access_token")
   }
 
+  openMobileNavigation() {
+    this.isMobileeNavOpen = ! this.isMobileeNavOpen;
+  }
+
+  isMobileNavOpen(): boolean
+  {
+    return this.isMobileeNavOpen == true;
+  }
   ngOnDestroy(): void {
     if(this.searchSubscrption){
       this.searchSubscrption.unsubscribe();

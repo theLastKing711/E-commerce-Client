@@ -1,3 +1,4 @@
+import { InvoiceDialogService } from './../../invoice-dialog.service';
 import { MatDialog } from '@angular/material/dialog';
 import { AddInvoiceDialogComponent } from './../add-invoice-dialog/add-invoice-dialog.component';
 import { Subscription } from 'rxjs';
@@ -27,6 +28,7 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
 export class IndexComponent implements OnInit, OnDestroy {
 
   invoicesSubscription!: Subscription;
+  invoiceDialogSubscription!: Subscription;
 
   invoicesList!: Invoice[];
 
@@ -39,19 +41,24 @@ export class IndexComponent implements OnInit, OnDestroy {
 
   CategoriesSelectList!: Invoice[]
 
-  displayedColumns: string[] = ['id','createdAt', 'total',  'expand'];
+  displayedColumns: string[] = ['id','createdAt', 'total', 'appUser',  'expand'];
 
-  invoiceDetailsColumns: string[] = ['id', 'createdAt', 'productName', 'prodcutQuantity', 'unitPrice'];
+  invoiceDetailsColumns: string[] = ['id', 'createdAt', 'productName', 'productQuantity', 'unitPrice'];
 
 
   constructor(
     private invoiceService: InvoiceService,
      private alertifyService: AlertifyService,
-     private dialog: MatDialog
+     private dialog: MatDialog,
+     private invoiceDialogService: InvoiceDialogService
   ) { }
 
   ngOnInit(): void {
     this.getInvoices(this.pageNumber, this.pageSize);
+
+    this.invoiceDialogSubscription = this.invoiceDialogService.subject.subscribe(result => {
+      this.getInvoices(1, this.pageSize)
+    })
 
   }
 
@@ -93,6 +100,10 @@ export class IndexComponent implements OnInit, OnDestroy {
 
       if(this.invoicesSubscription) {
         this.invoicesSubscription.unsubscribe();
+      }
+
+      if(this.invoiceDialogSubscription) {
+        this.invoiceDialogSubscription.unsubscribe()
       }
 
   }

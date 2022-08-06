@@ -5,7 +5,7 @@
 
     <mat-form-field appearance="fill">
       <mat-label>Choose user</mat-label>
-      <mat-select (selectionChange)="selectUser($event)" formControlName="appUserId">
+      <mat-select formControlName="appUserId">
         <mat-option *ngFor="let user of usersList" [value]="user.id">
           {{ user.username }}
         </mat-option>
@@ -23,26 +23,29 @@
             <mat-icon (click)="addInvoiceDetails()">
               library_add</mat-icon>
 
-            <mat-icon class="delete-btn" (click)="deleteInvoiceDetail(i)">
+            <mat-icon class="delete-btn" (click)="deleteInvoiceDetail(i)" *ngIf="invoicesDetails.length > 1">
               delete_forever
             </mat-icon>
           </div>
 
-          <div class="invoices-details-list__controls d-flex gap-1">
+          <div>
             <mat-form-field appearance="fill">
-              <mat-label>Choose product</mat-label>
-              <mat-select (selectionChange)="selectUser($event)" formControlName="productId">
+              <mat-label>Product name</mat-label>
+              <mat-select  formControlName="productId">
                 <mat-option *ngFor="let product of productsList" [value]="product.id">
                   {{ product.name }}
                 </mat-option>
               </mat-select>
-              <mat-error *ngIf="hasError('productId')">product is required</mat-error>
+              <mat-error *ngIf="formArrayControlHasEmptyError(i, 'productId')">product is required</mat-error>
             </mat-form-field>
 
             <mat-form-field appearance="fill">
-              <mat-label>Choose product</mat-label>
+              <mat-label>Quantity</mat-label>
               <input matInput formControlName="productQuantity" placeholder="Product quantity" type="number">
-              <mat-error *ngIf="hasError('productQuantity')">product quantity is required</mat-error>
+              <mat-error *ngIf="formArrayControlHasEmptyError(i, 'productQuantity');">product quantity is required</mat-error>
+              <mat-error *ngIf="formArrayControlMinError(i, 'productQuantity')">
+                quantity must be greater than 0
+              </mat-error>
             </mat-form-field>
           </div>
 

@@ -1,4 +1,4 @@
-import { Invoice } from 'src/types/invoice';
+import { AddInvoiceDetails, Invoice } from 'src/types/invoice';
 import { MatSelectChange } from '@angular/material/select';
 import { Product } from 'src/types/product';
 import { AppUser } from 'src/types/appUser';
@@ -36,26 +36,15 @@ export class AddInvoiceDialogComponent implements OnInit {
 
 
 
-//  invoiceForm = new FormGroup({
-//    appUserId: new FormControl(null, Validators.required),
-//    invoicesDetails: new FormArray([
-//        new FormGroup({
-//         productId: new FormControl(null, Validators.required),
-//         productQuantity: new FormControl(0, Validators.required),
-
-//        })
-//    ])
-//  });
-
-
   get invoicesDetails() {
-    return this.invoiceForm.controls["invoicesDetails"] as FormArray<FormGroup<{productId: FormControl<null>,productQuantity: FormControl<number | null>}>>
+    return this.invoiceForm.controls["invoicesDetails"] as FormArray<FormGroup<{productId: FormControl<number | null>,productQuantity: FormControl<number | null>}>>
   }
 
   addInvoiceDetails() {
-    var newInvoiceDetailsGroup = new FormGroup({
-      productId: new FormControl(null, Validators.required),
-      productQuantity: new FormControl(0, Validators.required)
+
+    var newInvoiceDetailsGroup = this.fb.group({
+      productId: this.fb.control(0, Validators.required),
+      productQuantity: this.fb.control(0, [Validators.required, Validators.min(1)])
     })
 
     this.invoicesDetails.push(newInvoiceDetailsGroup);
@@ -63,6 +52,7 @@ export class AddInvoiceDialogComponent implements OnInit {
    }
 
    deleteInvoiceDetail(invoiceDetailIndex: number) {
+
     this.invoicesDetails.removeAt(invoiceDetailIndex)
    }
 
@@ -71,26 +61,13 @@ export class AddInvoiceDialogComponent implements OnInit {
     appUserId: this.fb.control(null, Validators.required),
     invoicesDetails: this.fb.array([
       this.fb.group({
-        productId: this.fb.control(null, Validators.required),
-        productQuantity: this.fb.control(0, Validators.required),
+        productId: this.fb.control(0, Validators.required),
+        productQuantity: this.fb.control(0, [Validators.required, Validators.min(1)]),
       })
     ])
-      //        new FormGroup({
-      //         productId: new FormControl(null, Validators.required),
-      //         productQuantity: new FormControl(0, Validators.required),
-
-      //        })
-      //    ])
   })
 
 
- selectUser(e: MatSelectChange) {
-
- }
-
- selectProduct(e: MatSelectChange) {
-
- }
 
  ngOnInit(): void {
   this.userAndProductListsSubscription = this.invoiceService
@@ -104,34 +81,71 @@ export class AddInvoiceDialogComponent implements OnInit {
 
  addInvoice() {
 
-  //  const newCategory : AddInvoice = {
-  //    appUserId: 3
-  //  }
+  const appUserId = this.getFormControl<number>('appUserId');
 
-  //  this.invoiceService.addInvoice(newCategory)
-  //                      .subscribe(invoice => {
-  //                        this.invoiceDialogService.subject.next(invoice);
-  //                        this.alertifyService.success("Category added successfully")
-  //                        this.dialogRef.close();
-  //                      })
+  const invoiceDetailsList = this.invoicesDetails.controls.map( item => {
+    return {
+      productId: item.get("productId")?.value,
+      productQuantity: item.get("productQuantity")?.value
+    } as AddInvoiceDetails
+  })
+
+   const newIvoice : AddInvoice = {
+     appUserId: appUserId,
+     InvoicesDetails:invoiceDetailsList
+
+   }
+
+   console.log("new Invoice", newIvoice)
+
+   this.invoiceService.addInvoice(newIvoice)
+                       .subscribe(invoice => {
+                         this.invoiceDialogService.subject.next(invoice);
+                         this.alertifyService.success("Invoice added successfully")
+                         this.dialogRef.close();
+                       })
 
  }
 
-  formArrayHasError(index: number, key: string) {
+ getFormControl<T>(key: string): T
+ {
+  return this.invoiceForm.get(key)?.value;
+ }
 
-    const selectedControl = this.invoicesDetails.at(index).get(key)
+  formArrayControlHasEmptyError(index: number, key: string) {
 
-    const isEmpty: boolean = selectedControl?.value == ""
+    const control = this.invoicesDetails.at(index).get(key)
 
-    return  selectedControl?.pristine || (isEmpty)
+    const isEmpty = control?.hasError("required")
+
+    const isTouched = control?.touched;
+
+    return  isEmpty && isTouched
 
   }
 
+  formArrayControlMinError(index: number, key: string) {
+
+    const control = this.invoicesDetails.at(index).get(key)
+
+    const hasMinError = control?.hasError("min")
+
+    const isTouched = control?.touched;
+
+    return  hasMinError && isTouched
+
+  }
+
+
   hasError(key: string) {
 
-    const isEmpty: boolean = this.invoiceForm.get(key)?.value == ""
+    const control = this.invoiceForm.get(key)
 
-    return this.invoiceForm.get(key)?.pristine || (isEmpty)
+    const isEmpty = control?.hasError('required')
+
+    const isTouched = control?.touched;
+
+    return isEmpty &&  isTouched
   }
 
   formNotValid() {
