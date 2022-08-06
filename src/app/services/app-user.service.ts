@@ -52,7 +52,7 @@ export class AppUserService {
 
 
   removeAppUser(id: number) : Observable<boolean> {
-    const deleteAppUserUserUrl = this.appUsersUrl;
+    const deleteAppUserUserUrl = `${this.appUsersUrl}${id}`;
 
     return this.httpClient.delete<boolean>(deleteAppUserUserUrl);
   }

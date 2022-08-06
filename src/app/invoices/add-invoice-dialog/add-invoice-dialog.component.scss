@@ -1,0 +1,39 @@
+.mat-form-field {
+  margin-bottom: 1rem;
+  display: block;
+}
+
+.mat-dialog-actions {
+  display: flex;
+  justify-content: space-between;
+}
+
+
+.invoices-details-list{
+  margin: 0;
+  padding: 0;
+
+  li {
+    list-style-type: none;
+    padding: 0;
+  }
+
+  .mat-icon {
+    cursor: pointer;
+  }
+
+  .delete-btn {
+    color: red;
+  }
+
+  &__controls {
+    .mat-form-field {
+      width: 50%;
+    }
+  }
+
+
+}
+
+
+

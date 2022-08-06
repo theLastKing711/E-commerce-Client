@@ -43,11 +43,11 @@ export class AddCategoryDialogComponent implements OnInit {
   }
 
 
-  hasError() {
+  hasError(key: string) {
 
-    const isEmpty: boolean = this.categoryForm.get('name')?.value == ""
+    const isEmpty: boolean = this.categoryForm.get(key)?.value == ""
 
-    return this.categoryForm.get('name')?.pristine || (isEmpty)
+    return this.categoryForm.get(key)?.pristine || (isEmpty)
   }
 
 }

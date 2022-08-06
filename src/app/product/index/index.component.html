@@ -27,22 +27,28 @@
     </mat-form-field>
   </div>
 
-  <app-products-table
+  <ng-container *ngIf="productsList && productsList.length > 0">
+    <app-products-table
     [productsList]="productsList"
     [columnNames]="displayedColumns"
-  >
-  </app-products-table>
+    >
+    </app-products-table>
 
-  <mat-paginator
-    [length]="totalCount"
-    [pageSize]="pageSize"
-    [pageSizeOptions]="[pageSize]"
-    (page)="changePage($event)"
-    [pageIndex]="pageNumber - 1"
-    aria-label="Select page"
-    class="mt-2 mb-3"
-  >
-</mat-paginator>
+    <mat-paginator
+      [length]="totalCount"
+      [pageSize]="pageSize"
+      [pageSizeOptions]="[pageSize]"
+      (page)="changePage($event)"
+      [pageIndex]="pageNumber - 1"
+      aria-label="Select page"
+      class="mt-2 mb-3"
+    >
+  </mat-paginator>
+  </ng-container>
+
+  <ng-container *ngIf="productsList && productsList.length == 0">
+    <app-empty-list message="Products list is empty"></app-empty-list>
+  </ng-container>
 
 </div>
 

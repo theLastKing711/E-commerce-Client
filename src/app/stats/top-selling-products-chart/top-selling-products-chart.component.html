@@ -5,18 +5,27 @@
     Top Selling Products
   </h2>
 
-    <ngx-charts-pie-chart
-      [view]="view"
-      [results]="topSellingProductsData"
-      (window:resize)="onResize(TopProductsCardRef)"
-      [gradient]="gradient"
-      [legend]="false"
-      [labels]="showLabels"
-      [doughnut]="isDoughnut"
-      (select)="onSelect($event)"
-      (activate)="onActivate($event)"
-      (deactivate)="onDeactivate($event)"
 
-    >
-  </ngx-charts-pie-chart>
+  <ng-container *ngIf="topSellingProductsData && topSellingProductsData.length > 0">
+    <ngx-charts-pie-chart
+        [view]="view"
+        [results]="topSellingProductsData"
+        (window:resize)="onResize(TopProductsCardRef)"
+        [gradient]="gradient"
+        [legend]="false"
+        [labels]="showLabels"
+        [doughnut]="isDoughnut"
+        (select)="onSelect($event)"
+        (activate)="onActivate($event)"
+        (deactivate)="onDeactivate($event)"
+
+      >
+    </ngx-charts-pie-chart>
+  </ng-container>
+
+
+  <ng-container *ngIf="topSellingProductsData && topSellingProductsData.length == 0" >
+    <app-empty-list message="No products were sold this month" class="mb-2"></app-empty-list>
+  </ng-container>
+
 </div>

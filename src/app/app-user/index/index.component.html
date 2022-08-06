@@ -1,6 +1,50 @@
-<app-app-users-table
-  [displayedColumns]="displayedColumns"
-  [appUsersList]="appUsersList"
->
 
-</app-app-users-table>
+<ng-container *ngIf="loading">
+  <app-loading></app-loading>
+</ng-container>
+
+
+<ng-container *ngIf="!loading">
+
+  <div class="d-flex justify-content-between align-items-center table-filter">
+    <button
+      mat-raised-button
+      color="primary"
+      class="mb-2 add-button"
+      (click)="openAddDialog('0ms', '0ms')"
+      >
+      Add User
+    </button>
+  </div>
+
+
+  <ng-container *ngIf="appUsersList && appUsersList.length > 0">
+    <app-app-users-table
+    (appUserRemoved)="removeAppUser($event)"
+    [displayedColumns]="displayedColumns"
+    [appUsersList]="appUsersList"
+    >
+
+    </app-app-users-table>
+
+    <mat-paginator
+        [length]="totalCount"
+        [pageSize]="pageSize"
+        [pageSizeOptions]="[pageSize]"
+        (page)="changePage($event)"
+        [pageIndex]="pageNumber - 1"
+        aria-label="Select page"
+        class="mt-2 mb-3"
+      >
+    </mat-paginator>
+
+  </ng-container>
+
+
+  <ng-container *ngIf="appUsersList && appUsersList.length == 0">
+    <app-empty-list message="Users list is empty"></app-empty-list>
+  </ng-container>
+
+
+</ng-container>
+

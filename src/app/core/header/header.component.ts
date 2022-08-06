@@ -45,8 +45,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   test() {
-    console.log("gg")
-    alert("gg")
   }
 
   onBlur(e: any)

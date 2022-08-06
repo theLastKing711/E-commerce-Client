@@ -116,7 +116,7 @@ export class AppUserDetailsComponent implements OnInit {
 
      formData.append('email', email);
 
-     formData.append('email', password);
+     formData.append('password', password);
 
      formData.append('image', image);
 
@@ -125,7 +125,7 @@ export class AppUserDetailsComponent implements OnInit {
                          .subscribe(appUser => {
                            this.alertifyService.success("appUser updated successfully");
                            this.loading = false;
-                           this.router.navigate(['/appUsers']);
+                           this.router.navigate(['/users']);
                          })
    }
 
@@ -140,8 +140,8 @@ export class AppUserDetailsComponent implements OnInit {
    removeAppUser(id: number) {
     this.deletAppUserrSubscription = this.appUserService.removeAppUser(id)
                                       .subscribe(() => {
-                                        this.alertifyService.success("appUser deleted succefully")
-                                        this.router.navigate(['appUsers'])
+                                        this.alertifyService.success("users deleted succefully")
+                                        this.router.navigate(['users'])
                                       })
 
    }

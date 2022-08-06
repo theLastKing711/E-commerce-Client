@@ -1,0 +1,72 @@
+<h1 mat-dialog-title>Add New Invoice</h1>
+
+<div mat-dialog-content>
+  <form class="example-form" [formGroup]="invoiceForm" (ngSubmit)="addInvoice()">
+
+    <mat-form-field appearance="fill">
+      <mat-label>Choose user</mat-label>
+      <mat-select (selectionChange)="selectUser($event)" formControlName="appUserId">
+        <mat-option *ngFor="let user of usersList" [value]="user.id">
+          {{ user.username }}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="hasError('appUserId')">user is required</mat-error>
+    </mat-form-field>
+
+    <ul formArrayName="invoicesDetails" class="invoices-details-list">
+
+      <ng-container *ngFor="let invoiceDetail of invoicesDetails.controls; let i=index">
+
+        <li class="invoice-details-form-row" [formGroup]="invoiceDetail">
+
+          <div class="invoices-details-list__actions d-flex justify-content-between mb-1">
+            <mat-icon (click)="addInvoiceDetails()">
+              library_add</mat-icon>
+
+            <mat-icon class="delete-btn" (click)="deleteInvoiceDetail(i)">
+              delete_forever
+            </mat-icon>
+          </div>
+
+          <div class="invoices-details-list__controls d-flex gap-1">
+            <mat-form-field appearance="fill">
+              <mat-label>Choose product</mat-label>
+              <mat-select (selectionChange)="selectUser($event)" formControlName="productId">
+                <mat-option *ngFor="let product of productsList" [value]="product.id">
+                  {{ product.name }}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="hasError('productId')">product is required</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
+              <mat-label>Choose product</mat-label>
+              <input matInput formControlName="productQuantity" placeholder="Product quantity" type="number">
+              <mat-error *ngIf="hasError('productQuantity')">product quantity is required</mat-error>
+            </mat-form-field>
+          </div>
+
+
+        </li>
+      </ng-container>
+     </ul>
+
+
+
+  </form>
+</div>
+
+<div mat-dialog-actions>
+  <button
+    mat-button
+    mat-dialog-close
+    color="primay"
+    type="submit"
+    (click)="addInvoice()"
+    [disabled]="formNotValid()"
+  >
+  Submit
+</button>
+
+  <button mat-button mat-dialog-close color="success" >Cancel</button>
+</div>

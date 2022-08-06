@@ -15,10 +15,12 @@ import {MatSelectModule} from '@angular/material/select';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import { LoadingComponent } from './loading/loading.component';
+import { EmptyListComponent } from './empty-list/empty-list.component';
 
 @NgModule({
   declarations: [
-    LoadingComponent
+    LoadingComponent,
+    EmptyListComponent
   ],
   imports: [
     CommonModule,
@@ -50,7 +52,8 @@ import { LoadingComponent } from './loading/loading.component';
     RouterModule,
     MatProgressSpinnerModule,
     LoadingComponent,
-    MatCheckboxModule
+    MatCheckboxModule,
+    EmptyListComponent
   ]
 })
 export class SharedModule { }

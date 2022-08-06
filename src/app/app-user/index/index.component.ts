@@ -1,15 +1,12 @@
+import { PaginationService } from './../../services/pagination.service';
+import { AppUserDialogService } from 'src/app/services/app-user-dialog.service';
 import { AddAppUserDialogComponent } from './../add-app-user-dialog/add-app-user-dialog.component';
 import { AppUser } from 'src/types/appUser';
-import { ProductDialogService } from './../../services/product-dialog.service';
-import { CategoryService } from './../../services/category.service';
-import { Category, CategoryBase } from './../../../types/category';
 import { PageEvent } from '@angular/material/paginator';
 import { MatDialog } from '@angular/material/dialog';
 import { AlertifyService } from './../../services/alertify.service';
-import { Product } from './../../../types/product';
-import { Subscription } from 'rxjs';
+import { Subscription, switchMap } from 'rxjs';
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { MatSelectChange } from '@angular/material/select';
 import { AppUserService } from 'src/app/services/app-user.service';
 
 @Component({
@@ -22,6 +19,8 @@ export class IndexComponent implements OnInit, OnDestroy {
   AppUsersSubscription!: Subscription;
 
   appUserDaliogSubscription!: Subscription;
+
+  deleteUserSubscription!: Subscription;
 
   appUsersList!: AppUser[];
   pageNumber: number = 1;
@@ -37,15 +36,16 @@ export class IndexComponent implements OnInit, OnDestroy {
      private alertifyService: AlertifyService,
      private dialog: MatDialog,
      private appUserService: AppUserService,
-     private productDialogService: ProductDialogService
+     private appUserDialogService: AppUserDialogService,
+     private paginationService: PaginationService
   ) { }
 
   ngOnInit(): void {
     this.getAppUsers(this.pageNumber, this.pageSize);
 
-    // this.appUserDaliogSubscription = this.productDialogService.subject.subscribe(result => {
-    //   this.getAppUsers(1, this.pageSize)
-    // })
+    this.appUserDaliogSubscription = this.appUserDialogService.subject.subscribe(result => {
+      this.getAppUsers(1, this.pageSize)
+    })
   }
 
   getAppUsers(pageNumber: number, pageSize: number) {
@@ -71,6 +71,7 @@ export class IndexComponent implements OnInit, OnDestroy {
       exitAnimationDuration,
     });
   }
+
   changePage(e: PageEvent) {
 
     const nextPage = e.pageIndex + 1;
@@ -79,7 +80,28 @@ export class IndexComponent implements OnInit, OnDestroy {
   }
 
   removeAppUser(id: number) {
-    this.appUserService.removeAppUser(id);
+    this.appUserService.removeAppUser(id)
+                        .pipe(switchMap(
+                                () => {
+
+                                  if(this.paginationService.notFirstPage(this.pageNumber) && this.paginationService.pageEnded(this.totalCount, this.pageSize))
+                                  {
+                                    return this.appUserService.getAppUsers(this.pageNumber - 1, this.pageSize)
+                                  }
+
+                                  return this.appUserService.getAppUsers(this.pageNumber, this.pageSize)
+                                })
+                        )
+                        .subscribe(paginatedUsers => {
+
+                          this.alertifyService.error("User deleted successfully")
+
+                          this.appUsersList = [...paginatedUsers.data]
+                          this.pageNumber = paginatedUsers.pageNumber
+                          this.pageSize = paginatedUsers.pageSize;
+                          this.totalCount = paginatedUsers.totalCount;
+
+                        })
   }
 
   ngOnDestroy(): void {
@@ -87,6 +109,10 @@ export class IndexComponent implements OnInit, OnDestroy {
 
       if(this.appUserDaliogSubscription) {
         this.appUserDaliogSubscription.unsubscribe();
+      }
+
+      if(this.deleteUserSubscription) {
+        this.deleteUserSubscription.unsubscribe();
       }
 
 

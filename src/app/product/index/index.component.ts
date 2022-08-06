@@ -1,10 +1,9 @@
 import { ProductDialogService } from './../../services/product-dialog.service';
 import { CategoryService } from './../../services/category.service';
-import { Category, CategoryBase } from './../../../types/category';
+import { CategoryBase } from './../../../types/category';
 import { PageEvent } from '@angular/material/paginator';
 import { AddProductDialogComponent } from './../add-product-dialog/add-product-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
-import { AlertifyService } from './../../services/alertify.service';
 import { Product } from './../../../types/product';
 import { Subscription } from 'rxjs';
 import { ProductService } from './../../services/product.service';
@@ -36,20 +35,22 @@ export class IndexComponent implements OnInit, OnDestroy {
 
   constructor(private productService: ProductService,
     private categoryService: CategoryService,
-     private alertifyService: AlertifyService,
      private dialog: MatDialog,
      private productDialogService: ProductDialogService
   ) { }
 
   ngOnInit(): void {
+
     this.getProducts(this.pageNumber, this.pageSize);
 
     this.productDaliogSubscription = this.productDialogService.subject.subscribe(result => {
       this.getProducts(1, this.pageSize)
     })
+
   }
 
   getProducts(pageNumber: number, pageSize: number) {
+
     this.loading = true;
     this.productsSubscription = this.productService.getProductsAndCategoriesList(pageNumber, pageSize)
                         .subscribe(categoriesAndProducts => {
@@ -66,15 +67,19 @@ export class IndexComponent implements OnInit, OnDestroy {
                           this.loading = false;
 
                         })
+
   }
 
   openAddDialog(enterAnimationDuration: string, exitAnimationDuration: string): void {
+
     this.dialog.open(AddProductDialogComponent, {
       width: '300px',
       enterAnimationDuration,
       exitAnimationDuration,
     });
+
   }
+
   changePage(e: PageEvent) {
 
     const nextPage = e.pageIndex + 1;
@@ -105,6 +110,7 @@ export class IndexComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+
       this.productsSubscription.unsubscribe();
 
       if(this.categoryProductsSubscription) {
@@ -114,7 +120,6 @@ export class IndexComponent implements OnInit, OnDestroy {
       if(this.productDaliogSubscription) {
         this.productDaliogSubscription.unsubscribe();
       }
-
 
   }
 

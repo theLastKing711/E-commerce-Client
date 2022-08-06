@@ -1,55 +1,66 @@
-<table mat-table [dataSource]="appUsersList" class="mat-elevation-z8">
 
-  <!--- Note that these columns can be defined in any order.
-        The actual rendered columns are set as a property on the row definition" -->
 
-  <!-- Id Column -->
-  <ng-container matColumnDef="id">
-    <th mat-header-cell *matHeaderCellDef> Id </th>
-    <td mat-cell *matCellDef="let element"> {{element.id}} </td>
-  </ng-container>
+<ng-container *ngIf="appUsersList.length > 0">
 
-  <!-- user name Column -->
-  <ng-container matColumnDef="username">
-    <th mat-header-cell *matHeaderCellDef> username </th>
-    <td mat-cell *matCellDef="let element"> {{element.username}} </td>
-  </ng-container>
+  <table mat-table [dataSource]="appUsersList" class="mat-elevation-z8">
 
-   <!-- email Column -->
-   <ng-container matColumnDef="email">
-    <th mat-header-cell *matHeaderCellDef> email </th>
-    <td mat-cell *matCellDef="let element"> {{element.email}} </td>
-  </ng-container>
+    <!--- Note that these columns can be defined in any order.
+          The actual rendered columns are set as a property on the row definition" -->
 
-  createdAt Column
-  <ng-container matColumnDef="createdAt">
-    <th mat-header-cell *matHeaderCellDef> Date Created </th>
-    <td mat-cell *matCellDef="let element"> {{element.createdAt | date: 'y' || null}} </td>
-  </ng-container>
+    <!-- Id Column -->
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef> Id </th>
+      <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+    </ng-container>
 
-  <ng-container matColumnDef="details">
-    <th mat-header-cell *matHeaderCellDef> Details </th>
-    <td mat-cell *matCellDef="let element">
-      <a [routerLink]="['/users', element.id]" class="icon-container">
-        <mat-icon color="red">
-          remove_red_eye
-        </mat-icon>
-      </a>
-    </td>
-  </ng-container>
+    <!-- user name Column -->
+    <ng-container matColumnDef="username">
+      <th mat-header-cell *matHeaderCellDef> username </th>
+      <td mat-cell *matCellDef="let element"> {{element.username}} </td>
+    </ng-container>
 
-  <ng-container matColumnDef="delete">
-    <th mat-header-cell *matHeaderCellDef></th>
-    <td mat-cell *matCellDef="let element">
-      <span (click)="removeAppUser(element.id)" class="icon-container">
-        <mat-icon class="delete-icon">
-          delete
-        </mat-icon>
-    </span>
+    <!-- email Column -->
+    <ng-container matColumnDef="email">
+      <th mat-header-cell *matHeaderCellDef> email </th>
+      <td mat-cell *matCellDef="let element"> {{element.email}} </td>
+    </ng-container>
 
-    </td>
-  </ng-container>
+    <!-- createdAt Column -->
+    <ng-container matColumnDef="createdAt">
+      <th mat-header-cell *matHeaderCellDef> Date Created </th>
+      <td mat-cell *matCellDef="let element"> {{element.createdAt | date: 'y' || null}} </td>
+    </ng-container>
 
-  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-</table>
+    <!-- details Column -->
+    <ng-container matColumnDef="details">
+      <th mat-header-cell *matHeaderCellDef> Details </th>
+      <td mat-cell *matCellDef="let element">
+        <a [routerLink]="['/users', element.id]" class="icon-container">
+          <mat-icon color="red">
+            remove_red_eye
+          </mat-icon>
+        </a>
+      </td>
+    </ng-container>
+
+    <!-- delete Column -->
+    <ng-container matColumnDef="delete">
+      <th mat-header-cell *matHeaderCellDef></th>
+      <td mat-cell *matCellDef="let element">
+        <span (click)="removeAppUser(element.id)" class="icon-container">
+          <mat-icon class="delete-icon">
+            delete
+          </mat-icon>
+      </span>
+
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+</ng-container>
+
+<ng-container *ngIf="appUsersList.length == 0">
+  <app-empty-list listName="users"></app-empty-list>
+</ng-container>

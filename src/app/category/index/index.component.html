@@ -15,17 +15,28 @@
     </button>
   </div>
 
-  <app-categories-table [categoriesList]="categoriesList" [columnNames]="displayedColumns" (categoryRemoved)="removeCategory($event)"></app-categories-table>
+  <ng-container *ngIf="categoriesList && categoriesList.length > 0">
+    <app-categories-table
+      [categoriesList]="categoriesList"
+      [columnNames]="displayedColumns"
+      (categoryRemoved)="removeCategory($event)"
+    >
+    </app-categories-table>
 
-  <mat-paginator
-    [length]="totalCount"
-    [pageSize]="pageSize"
-    [pageSizeOptions]="[10]"
-    [pageIndex]="pageNumber - 1"
-    (page)="changePage($event)"
-    aria-label="categoies pagination"
-  >
-</mat-paginator>
+      <mat-paginator
+      [length]="totalCount"
+      [pageSize]="pageSize"
+      [pageSizeOptions]="[10]"
+      [pageIndex]="pageNumber - 1"
+      (page)="changePage($event)"
+      aria-label="categoies pagination"
+    >
+  </mat-paginator>
+  </ng-container>
+
+  <ng-container *ngIf="categoriesList && categoriesList.length == 0">
+    <app-empty-list message="Categories list is empty"></app-empty-list>
+  </ng-container>
 
 </div>
 

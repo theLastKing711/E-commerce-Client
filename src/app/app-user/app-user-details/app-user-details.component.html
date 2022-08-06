@@ -19,7 +19,6 @@
           </mat-card-header>
 
           <mat-card-content class="mb-4">
-
           <div class="row">
 
               <div class="col-md-4 col-sm-6">
@@ -53,18 +52,16 @@
               </div>
 
           </div>
-
           </mat-card-content>
 
           <mat-card-actions>
-
             <div class="d-flex justify-content-between card-actions">
               <button mat-raised-button color="primary" class="py-1 px-5" type="submit" [disabled]="formNotValid()">submit</button>
               <div class="d-flex card-actions">
                 <button type="button" mat-raised-button color="warn" class="py-1 px-5 delete-button" (click)="removeAppUser(id)">delete</button>
 
                 <button mat-stroked-button color="primary" class="m-0 p-0" type="button">
-                  <a  routerLink="/AppUsers" class="d-block py-1 px-5 ">
+                  <a  routerLink="/users" class="d-block py-1 px-5 ">
                     cancel
                   </a>
                 </button>

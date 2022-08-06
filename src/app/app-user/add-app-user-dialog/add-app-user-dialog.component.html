@@ -1,1 +1,49 @@
-<p>add-app-user-dialog works!</p>
+<div>
+
+<div *ngIf="!loading">
+  <h1 mat-dialog-title>Add New AppUser</h1>
+
+  <div mat-dialog-content>
+    <form class="example-form" [formGroup]="productForm" (ngSubmit)="addAppUser()">
+
+      <mat-form-field appearance="fill">
+        <mat-label>Username</mat-label>
+        <input matInput formControlName="username">
+        <mat-error *ngIf="hasError('username')">Username is required</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="email">
+        <mat-error *ngIf="hasError('email')">Email is required</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Password</mat-label>
+        <input matInput formControlName="password" type="password">
+        <mat-error *ngIf="hasError('password')">Password is required</mat-error>
+      </mat-form-field>
+
+      <div class="mb-4">
+        <mat-label>AppUser Image:</mat-label>
+        <input type="file" (change)="uploadFile($event)" class="mt-2" />
+        <!-- <mat-error *ngIf="fileIsEmpty()" class="mt-1">Category Image is required</mat-error> -->
+      </div>
+
+    </form>
+  </div>
+
+  <div mat-dialog-actions>
+    <button
+      mat-button
+      mat-dialog-close color="primay"
+      type="submit"
+      (click)="addAppUser()"
+      [disabled]="formNotValid()"
+    >
+    Submit
+  </button>
+
+    <button mat-button mat-dialog-close color="success" >Cancel</button>
+  </div>
+</div>

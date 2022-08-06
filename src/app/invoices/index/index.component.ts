@@ -1,3 +1,5 @@
+import { MatDialog } from '@angular/material/dialog';
+import { AddInvoiceDialogComponent } from './../add-invoice-dialog/add-invoice-dialog.component';
 import { Subscription } from 'rxjs';
 import { Invoice, InvoiceDetails } from './../../../types/invoice';
 import { InvoiceService } from './../../services/invoice.service';
@@ -45,6 +47,7 @@ export class IndexComponent implements OnInit, OnDestroy {
   constructor(
     private invoiceService: InvoiceService,
      private alertifyService: AlertifyService,
+     private dialog: MatDialog
   ) { }
 
   ngOnInit(): void {
@@ -74,6 +77,16 @@ export class IndexComponent implements OnInit, OnDestroy {
     const nextPage = e.pageIndex + 1;
 
     this.getInvoices(nextPage, this.pageSize);
+  }
+
+  openAddDialog(enterAnimationDuration: string, exitAnimationDuration: string): void {
+
+    this.dialog.open(AddInvoiceDialogComponent, {
+      width: '300px',
+      enterAnimationDuration,
+      exitAnimationDuration,
+    });
+
   }
 
   ngOnDestroy(): void {

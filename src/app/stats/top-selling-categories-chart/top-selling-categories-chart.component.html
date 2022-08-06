@@ -5,6 +5,7 @@
     Top Selling Categories
   </h2>
 
+  <ng-container *ngIf="topSellingCategoriesData && topSellingCategoriesData.length > 0" >
     <ngx-charts-pie-chart
       [view]="view"
       [results]="topSellingCategoriesData"
@@ -18,5 +19,11 @@
       (deactivate)="onDeactivate($event)"
 
     >
-  </ngx-charts-pie-chart>
+    </ngx-charts-pie-chart>
+  </ng-container >
+
+  <ng-container *ngIf="topSellingCategoriesData && topSellingCategoriesData.length == 0" >
+    <app-empty-list message="No categories products were sold this month" class="mb-2"></app-empty-list>
+  </ng-container>
+
 </div>
