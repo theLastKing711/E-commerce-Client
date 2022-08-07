@@ -16,7 +16,9 @@
         <mat-icon>close icon</mat-icon>
       </button>
 
-    <div class="search-items" *ngIf="isLoggedIn()">
+    <app-search class="search-items" *ngIf="isLoggedIn()"></app-search>
+
+    <!-- <div class="search-items" *ngIf="isLoggedIn()">
       <input (input)="searchItems($event)"
              class="search-items__input"
              placeholder="Type here to search"
@@ -47,7 +49,7 @@
           </li>
         </ul>
       </div>
-    </div>
+    </div> -->
 
     <nav class="app-header__action">
       <ul *ngIf="! isLoggedIn()" class="d-flex app-header__list gap-4">

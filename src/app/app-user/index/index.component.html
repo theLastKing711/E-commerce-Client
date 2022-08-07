@@ -27,16 +27,6 @@
 
     </app-app-users-table>
 
-    <mat-paginator
-        [length]="totalCount"
-        [pageSize]="pageSize"
-        [pageSizeOptions]="[pageSize]"
-        (page)="changePage($event)"
-        [pageIndex]="pageNumber - 1"
-        aria-label="Select page"
-        class="mt-2 mb-3"
-      >
-    </mat-paginator>
 
   </ng-container>
 

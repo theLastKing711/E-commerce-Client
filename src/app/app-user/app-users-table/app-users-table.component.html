@@ -2,7 +2,7 @@
 
 <ng-container *ngIf="appUsersList.length > 0">
 
-  <table mat-table [dataSource]="appUsersList" class="mat-elevation-z8">
+  <table mat-table [dataSource]="appUsersList" class="mat-elevation-z8" >
 
     <!--- Note that these columns can be defined in any order.
           The actual rendered columns are set as a property on the row definition" -->
@@ -59,6 +59,7 @@
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
   </table>
+
 </ng-container>
 
 <ng-container *ngIf="appUsersList.length == 0">
