@@ -8,9 +8,9 @@ export class PaginationService {
   constructor() { }
 
 
-  notFirstPage(pageNubmer: number) {
+  notFirstPage(pageNumber: number) {
 
-    return pageNubmer !== -1
+    return pageNumber !== -1
   }
 
   pageEnded(count: number, pageSize: number) {

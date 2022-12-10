@@ -57,5 +57,12 @@ export class AppUserService {
     return this.httpClient.delete<boolean>(deleteAppUserUserUrl);
   }
 
+  removeAppUsers(ids: number[]) : Observable<boolean> {
+    const deleteAppUserUserUrl = `${this.appUsersUrl}removeRange`;
+
+    return this.httpClient.post<boolean>(deleteAppUserUserUrl, ids);
+  }
+
+
 
 }

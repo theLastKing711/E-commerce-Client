@@ -16,11 +16,14 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import { LoadingComponent } from './loading/loading.component';
 import { EmptyListComponent } from './empty-list/empty-list.component';
+import {MatRippleModule} from '@angular/material/core';
+import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
 
 @NgModule({
   declarations: [
     LoadingComponent,
-    EmptyListComponent
+    EmptyListComponent,
+    ConfirmationDialogComponent
   ],
   imports: [
     CommonModule,
@@ -36,7 +39,8 @@ import { EmptyListComponent } from './empty-list/empty-list.component';
     MatSelectModule,
     RouterModule,
     MatProgressSpinnerModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    MatRippleModule
   ],
   exports: [
     MatToolbarModule,
@@ -53,7 +57,9 @@ import { EmptyListComponent } from './empty-list/empty-list.component';
     MatProgressSpinnerModule,
     LoadingComponent,
     MatCheckboxModule,
-    EmptyListComponent
+    MatRippleModule,
+    EmptyListComponent,
+    ConfirmationDialogComponent
   ]
 })
 export class SharedModule { }

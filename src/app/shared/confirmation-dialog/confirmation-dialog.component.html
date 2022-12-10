@@ -1,0 +1,14 @@
+<h3>
+    Are You Sure?
+</h3>
+
+<mat-dialog-content>
+    <p>
+        {{data}}
+    </p>
+</mat-dialog-content>
+
+<mat-dialog-actions align="center">
+    <button mat-raised-button color="primary" (click)="closeDialog(true)" tabindex="1">Yes</button>
+    <button mat-raised-button mat-dialog-close tabindex="-1" (click)="closeDialog(false)">Cancel</button>
+</mat-dialog-actions>

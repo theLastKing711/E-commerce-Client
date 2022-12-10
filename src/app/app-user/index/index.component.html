@@ -20,9 +20,13 @@
 
   <ng-container *ngIf="appUsersList && appUsersList.length > 0">
     <app-app-users-table
-    (appUserRemoved)="removeAppUser($event)"
+    (appUsersRemoved)="removeAppUsers($event)"
+    (userSelectionFilled)="fillSelections($event)"
+    (userSelectionCleared)="clearSelections()"
+    (userSelectionItemToggled)="toggleSelection($event)"
     [displayedColumns]="displayedColumns"
     [appUsersList]="appUsersList"
+    [userSelection]="usersSelectionModel"
     >
 
     </app-app-users-table>

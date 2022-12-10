@@ -18,17 +18,23 @@
 .main-content {
   height: calc(100% - 64px);
   display: flex;
-  flex-wrap: wrap;
+  // flex-wrap: wrap;
 
+
+  @media screen and (max-width: 900px) {
+    display: block;
+    height: auto;
+
+  }
 
   &__aside {
     background-color: white;
     box-shadow: 0px 2px 1px rgba(0, 0, 0, 0.4);
     color: black;
-    flex: 0 0 20%;
+    flex: 0 0 250px;
 
-    @media screen and (max-width: 800px) {
-      flex: 100%;
+    @media screen and (max-width: 900px) {
+      // flex: 100%;
     }
 
   }
@@ -40,11 +46,9 @@
   &__container {
     width: 90%;
     margin: 3rem auto;
+    // width: 100%;
+    // padding: 4rem;
 
-  }
-
-  @media screen and (max-width: 700px) {
-    height: auto;
   }
 
 }

@@ -1,13 +1,16 @@
+import { ConfirmationDialogComponent } from './../../shared/confirmation-dialog/confirmation-dialog.component';
 import { PaginationService } from './../../services/pagination.service';
 import { AppUserDialogService } from 'src/app/services/app-user-dialog.service';
 import { AddAppUserDialogComponent } from './../add-app-user-dialog/add-app-user-dialog.component';
 import { AppUser } from 'src/types/appUser';
 import { PageEvent } from '@angular/material/paginator';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { AlertifyService } from './../../services/alertify.service';
 import { Subscription, switchMap } from 'rxjs';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AppUserService } from 'src/app/services/app-user.service';
+import { SelectionModel } from '@angular/cdk/collections';
+import { EnhancedSelectionModel } from 'src/app/shared/utils/EnhancedSelectionModel';
 
 @Component({
   selector: 'app-index',
@@ -22,6 +25,9 @@ export class IndexComponent implements OnInit, OnDestroy {
 
   deleteUserSubscription!: Subscription;
 
+  usersSelectionModel: EnhancedSelectionModel<AppUser> = new EnhancedSelectionModel<AppUser>(true);
+
+
   appUsersList!: AppUser[];
   pageNumber: number = 1;
   pageSize: number = 10;
@@ -29,8 +35,7 @@ export class IndexComponent implements OnInit, OnDestroy {
 
   loading: boolean = false;
 
-
-  displayedColumns: string[] = ['id', 'username', 'email', 'createdAt',  'details', 'delete'];
+  displayedColumns: string[] = ['selection', 'id', 'username', 'email', 'createdAt',  'details'];
 
   constructor(
      private alertifyService: AlertifyService,
@@ -72,6 +77,19 @@ export class IndexComponent implements OnInit, OnDestroy {
     });
   }
 
+  openDeleteConfirmationDialog(enterAnimationDuration: string, exitAnimationDuration: string, data: any): MatDialogRef<ConfirmationDialogComponent, any> {
+    const confirmationDialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      enterAnimationDuration,
+      exitAnimationDuration,
+      data: data
+    })
+
+
+    return confirmationDialogRef;
+
+  }
+
+
   changePage(e: PageEvent) {
 
     const nextPage = e.pageIndex + 1;
@@ -79,30 +97,62 @@ export class IndexComponent implements OnInit, OnDestroy {
     this.getAppUsers(nextPage, this.pageSize);
   }
 
-  removeAppUser(id: number) {
-    this.appUserService.removeAppUser(id)
-                        .pipe(switchMap(
-                                () => {
+  removeAppUsers(ids: number[]) {
 
-                                  if(this.paginationService.notFirstPage(this.pageNumber) && this.paginationService.pageEnded(this.totalCount, this.pageSize))
-                                  {
-                                    return this.appUserService.getAppUsers(this.pageNumber - 1, this.pageSize)
-                                  }
+    this.openDeleteConfirmationDialog("200", "200", "do you want to delete the selected users").afterClosed().subscribe(isSubmitted => {
 
-                                  return this.appUserService.getAppUsers(this.pageNumber, this.pageSize)
-                                })
-                        )
-                        .subscribe(paginatedUsers => {
+      if(isSubmitted)
+      {
+              this.appUserService.removeAppUsers(ids)
+              .pipe(switchMap(
+                      () => {
 
-                          this.alertifyService.error("User deleted successfully")
+                        if(this.paginationService.notFirstPage(this.pageNumber) && this.paginationService.pageEnded(this.totalCount, this.pageSize))
+                        {
+                          return this.appUserService.getAppUsers(this.pageNumber - 1, this.pageSize)
+                        }
 
-                          this.appUsersList = [...paginatedUsers.data]
-                          this.pageNumber = paginatedUsers.pageNumber
-                          this.pageSize = paginatedUsers.pageSize;
-                          this.totalCount = paginatedUsers.totalCount;
+                        return this.appUserService.getAppUsers(this.pageNumber, this.pageSize)
+                      })
+              )
+              .subscribe(paginatedUsers => {
 
-                        })
+                this.alertifyService.error("Users deleted successfully")
+                this.usersSelectionModel.clearSelections();
+                this.appUsersList = [...paginatedUsers.data]
+                this.pageNumber = paginatedUsers.pageNumber
+                this.pageSize = paginatedUsers.pageSize;
+                this.totalCount = paginatedUsers.totalCount;
+
+              })
+      }
+    })
+
   }
+
+  initSelections(list: AppUser[]) {
+
+    this.usersSelectionModel.initSelections(this.usersSelectionModel);
+  }
+
+  clearSelections() {
+    this.usersSelectionModel.clearSelections();
+    this.usersSelectionModel.initSelections(this.usersSelectionModel)
+  }
+
+  fillSelections(list: AppUser[]) {
+
+    this.usersSelectionModel.fillSelections(list);
+    this.usersSelectionModel.initSelections(this.usersSelectionModel)
+
+  }
+
+  toggleSelection(item: AppUser)
+  {
+    this.usersSelectionModel.toggleSelection(item);
+    this.usersSelectionModel.initSelections(this.usersSelectionModel);
+  }
+
 
   ngOnDestroy(): void {
       this.AppUsersSubscription.unsubscribe();

@@ -1,8 +1,23 @@
+
+.table-container {
+  overflow-x: auto;
+
+}
+
 .mat-table {
+  // min-width: 950px;
   width: 100%;
+
 
   th,td {
     text-align: center;
+    // font-size: 0.9rem;
+  }
+
+  th, td {
+    color: black;
+    padding: 1rem;
+    font-size: 1rem;
   }
 
   .icon-container {
@@ -16,6 +31,37 @@
 
   tr.expanded-row {
     height: auto;
+  }
+
+  .actions-row {
+    th {
+      border-bottom: none;
+    }
+
+    .selected-count__header {
+      min-width: 120px;
+      width: 120px;
+      height: 62px;
+    }
+
+  }
+
+  .main-delete-icon {
+    // margin-right: 4.125rem;
+  }
+
+  // .delete-header {
+  //   text-align: center;
+  // }
+
+  .selected-count {
+
+
+    &__text {
+      font-size: 1.125rem;
+      margin: 0;
+    }
+
   }
 
 }

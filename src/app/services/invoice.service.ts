@@ -48,6 +48,13 @@ export class InvoiceService {
     return this.httpClient.delete(removeInvoiceUrl)
   }
 
+  removeInvoices(ids: number[]) {
+
+    const removeInvoicesUrl = `${this.invoicesUrl}/deleteInvoices`
+
+    return this.httpClient.post(removeInvoicesUrl, ids)
+  }
+
   getProductAndUserLists() {
 
     const productsList = this.productService.getProducts(0, 0)
