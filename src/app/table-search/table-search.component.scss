@@ -1,0 +1,12 @@
+.search-form-control {
+
+    font-size: 1.1rem;
+    width: 50%;
+
+    @media screen and (max-width: 900px) {
+        width: 100%;
+    }
+
+
+
+}

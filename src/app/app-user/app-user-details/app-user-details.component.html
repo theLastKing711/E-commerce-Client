@@ -1,10 +1,8 @@
 
-<div class="loading" *ngIf="loading">
-  <app-loading></app-loading>
-</div>
+  <app-loading *ngIf="loading$ | async"></app-loading>
 
 
-<div *ngIf="!loading">
+<div *ngIf="! (loading$ | async)">
 
   <form [formGroup]="appUserForm" (ngSubmit)="updatAppUser()">
 

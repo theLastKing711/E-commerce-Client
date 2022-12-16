@@ -1,13 +1,15 @@
 import { AppUser } from 'src/types/appUser';
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Subject, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AppUserDialogService {
 
-  subject: Subject<AppUser> = new Subject<AppUser>();
+  private subject: Subject<AppUser> = new Subject<AppUser>();
+
+  subject$: Observable<AppUser> = this.subject.asObservable();
 
   sendUser(appUser: AppUser) {
 

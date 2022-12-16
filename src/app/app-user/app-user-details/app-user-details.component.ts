@@ -1,3 +1,4 @@
+import { LoadingService } from './../../loading.service';
 import { AppUserService } from 'src/app/services/app-user.service';
 import { AppUser } from 'src/types/appUser';
 import { Component, OnInit } from '@angular/core';
@@ -6,7 +7,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AlertifyService } from 'src/app/services/alertify.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { environment } from 'src/environments/environment';
-import { switchMap } from 'rxjs';
+import { switchMap, Observable } from 'rxjs';
 
 @Component({
   selector: 'app-app-user-details',
@@ -27,13 +28,16 @@ export class AppUserDetailsComponent implements OnInit {
 
   imagesPath: string = environment.imagesPath;
 
-  loading: boolean = false;
+  loading$!: Observable<boolean>;
 
   constructor(private appUserService: AppUserService,
               private route: ActivatedRoute,
               private router: Router,
-              private alertifyService: AlertifyService
-              ) { }
+              private alertifyService: AlertifyService,
+              private loadingService: LoadingService
+              ) {
+                this.loading$ = this.loadingService.isLoading$;
+              }
 
   appUserForm = new FormGroup({
     username: new FormControl('', Validators.required),
@@ -44,7 +48,9 @@ export class AppUserDetailsComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.paramMap.pipe(switchMap(param => {
-      this.loading = true;
+
+      this.loadingService.showLoading();
+
       const id = parseInt(param.get('id')!);
       this.id = id;
       return this.appUserService.getAppUserById(id)
@@ -65,7 +71,7 @@ export class AppUserDetailsComponent implements OnInit {
         image: this.appUser.imagePath,
       })
 
-      this.loading = false;
+      this.loadingService.hideLoading();
     })
 
   }
@@ -93,8 +99,7 @@ export class AppUserDetailsComponent implements OnInit {
 
    updatAppUser() {
 
-    this.loading = true;
-
+     this.loadingService.showLoading();
 
      const formData = new FormData();
 
@@ -107,8 +112,6 @@ export class AppUserDetailsComponent implements OnInit {
      const password = form.get('password')?.value!;
 
      const image = form.get('image')?.value!;
-
-
 
      formData.append("id", this.id.toString());
 
@@ -124,11 +127,10 @@ export class AppUserDetailsComponent implements OnInit {
      this. updatAppUserrSubscription = this.appUserService.updateAppUser(formData, this.id)
                          .subscribe(appUser => {
                            this.alertifyService.success("appUser updated successfully");
-                           this.loading = false;
+                           this.loadingService.hideLoading();
                            this.router.navigate(['/users']);
                          })
    }
-
 
    hasError(key: string) {
 

@@ -1,5 +1,5 @@
 import { IPagination } from './../../types/base';
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { environment } from './../../environments/environment';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
@@ -10,17 +10,27 @@ import { AddAppUser, AppUser } from 'src/types/appUser';
 })
 export class AppUserService {
 
+  private appUsersList: BehaviorSubject<AppUser[]> = new BehaviorSubject<AppUser[]>([]);
+
+  appUsersList$: Observable<AppUser[]> = this.appUsersList.asObservable();
+
   appUsersUrl = `${environment.base_url}AppUsers/`;
 
   constructor(private httpClient:  HttpClient) { }
 
-  getAppUsers(pageNumber: number, pageSize: number): Observable<IPagination<AppUser>>
+
+  setUsers(users: AppUser[]) {
+    this.appUsersList.next(users)
+  }
+
+  getAppUsers(pageNumber: number, pageSize: number, query: string): Observable<IPagination<AppUser>>
   {
 
     const getApptUsersUrl = this.appUsersUrl;
 
     const params = new HttpParams().set('pageNumber', pageNumber)
-                                   .set('pageSize', pageSize);
+                                   .set('pageSize', pageSize)
+                                   .set('query', query)
 
     return this.httpClient.get<IPagination<AppUser>>(getApptUsersUrl, {params});
 

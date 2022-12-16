@@ -36,7 +36,6 @@ export class SearchComponent implements OnInit {
 
     const query = e.target.value;
 
-
     this.searchSubscrption = this.statsService.searchItems(query)
                                               .subscribe(searchResult => {
                                                 console.log("search result", searchResult);

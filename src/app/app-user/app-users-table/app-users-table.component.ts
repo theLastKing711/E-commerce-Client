@@ -64,14 +64,6 @@ export class AppUsersTableComponent {
     return this.userSelection.isToggleSelectionsIndeterminate(list);
   }
 
-  isSelectionsNotEmpty(): boolean {
-    return this.userSelection.isSelectionsEmpty();
-  }
-
-  private isSelectionsNotFull(list: AppUser[]): boolean {
-    return this.userSelection.isSelectionsFull(list);
-  }
-
   selectionsCount(): number {
     return this.userSelection.selectionsCount();
   }

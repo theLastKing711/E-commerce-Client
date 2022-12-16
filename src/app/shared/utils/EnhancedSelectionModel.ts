@@ -53,15 +53,7 @@ export class EnhancedSelectionModel<T extends {id : number}> extends SelectionMo
     }
 
     isToggleSelectionsIndeterminate(list: T[]): boolean {
-        return this.isSelectionsNotEmpty() && this.isSelectionsNotFull(list);
-    }
-
-    isSelectionsNotEmpty(): boolean {
-        return this.selected.length > 0;
-    }
-
-    isSelectionsNotFull(list: T[]): boolean {
-        return this.selected.length != list.length;
+        return ! this.isSelectionsEmpty() &&  ! this.isSelectionsFull(list);
     }
 
     selectionsCount(): number {

@@ -1,5 +1,6 @@
 <div  *ngIf="isLoggedIn()">
-  <input (input)="searchItems($event)"
+  <input
+        (input)="searchItems($event)"
          class="search-items__input"
          placeholder="Type here to search"
          (focus)="searchItems($event)"

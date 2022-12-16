@@ -1,10 +1,10 @@
 
-<ng-container *ngIf="loading">
-  <app-loading></app-loading>
-</ng-container>
+<app-loading *ngIf="loading$ | async"></app-loading>
 
 
-<ng-container *ngIf="!loading">
+<ng-container *ngIf="! (loading$ | async)">
+
+  <app-table-search></app-table-search>
 
   <div class="d-flex justify-content-between align-items-center table-filter">
     <button
@@ -17,28 +17,24 @@
     </button>
   </div>
 
-
-  <ng-container *ngIf="appUsersList && appUsersList.length > 0">
+  <ng-container *ngIf="(appUsersList$ | async) as appUsersList">
     <app-app-users-table
-    (appUsersRemoved)="removeAppUsers($event)"
-    (userSelectionFilled)="fillSelections($event)"
-    (userSelectionCleared)="clearSelections()"
-    (userSelectionItemToggled)="toggleSelection($event)"
-    [displayedColumns]="displayedColumns"
-    [appUsersList]="appUsersList"
-    [userSelection]="usersSelectionModel"
+      (appUsersRemoved)="removeAppUsers($event)"
+      (userSelectionFilled)="fillSelections($event)"
+      (userSelectionCleared)="clearSelections()"
+      (userSelectionItemToggled)="toggleSelection($event)"
+      [displayedColumns]="displayedColumns"
+      [appUsersList]="appUsersList"
+      [userSelection]="usersSelectionModel"
     >
-
     </app-app-users-table>
 
-
   </ng-container>
 
-
-  <ng-container *ngIf="appUsersList && appUsersList.length == 0">
-    <app-empty-list message="Users list is empty"></app-empty-list>
-  </ng-container>
-
+  <app-empty-list
+    *ngIf="! (appUsersList$ | async) as appUsersList"
+    message="Users list is empty">
+  </app-empty-list>
 
 </ng-container>
 

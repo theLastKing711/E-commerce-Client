@@ -34,13 +34,13 @@ export class AddAppUserDialogComponent implements OnInit {
 
 
 uploadFile(e: any) {
-  const file = e.target.files[0];
+    const file = e.target.files[0];
 
-  this.productForm.patchValue({
-    image: file
-  })
+    this.productForm.patchValue({
+      image: file
+    })
 
- }
+  }
 
  formNotValid() {
   return  !this.productForm.valid

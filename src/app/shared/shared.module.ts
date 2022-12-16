@@ -18,12 +18,15 @@ import { LoadingComponent } from './loading/loading.component';
 import { EmptyListComponent } from './empty-list/empty-list.component';
 import {MatRippleModule} from '@angular/material/core';
 import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
+import { MatSortModule } from '@angular/material/sort';
+import { TableSearchComponent } from '../table-search/table-search.component';
 
 @NgModule({
   declarations: [
     LoadingComponent,
     EmptyListComponent,
-    ConfirmationDialogComponent
+    ConfirmationDialogComponent,
+    TableSearchComponent
   ],
   imports: [
     CommonModule,
@@ -40,7 +43,8 @@ import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-
     RouterModule,
     MatProgressSpinnerModule,
     MatCheckboxModule,
-    MatRippleModule
+    MatRippleModule,
+    MatSortModule,
   ],
   exports: [
     MatToolbarModule,
@@ -59,7 +63,9 @@ import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-
     MatCheckboxModule,
     MatRippleModule,
     EmptyListComponent,
-    ConfirmationDialogComponent
+    ConfirmationDialogComponent,
+    MatSortModule,
+    TableSearchComponent
   ]
 })
 export class SharedModule { }

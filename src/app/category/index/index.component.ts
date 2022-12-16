@@ -81,7 +81,7 @@ export class IndexComponent implements OnInit, OnDestroy {
                         .pipe(switchMap(
                                 () => {
 
-                                  if(this.paginationService.notFirstPage(this.pageNumber) && this.paginationService.pageEnded(this.totalCount, this.pageSize))
+                                  if(this.paginationService.notFirstPage() && this.paginationService.pageEnded())
                                   {
                                     return this.categoryService.getCategories(this.pageNumber - 1, this.pageSize)
                                   }

@@ -10,7 +10,7 @@
         <th mat-header-cell *matHeaderCellDef colspan="1" class="delete-header">
           <span (click)="removeAppUsers(userSelection.selected)"
                 class="icon-container main-delete-icon"
-                *ngIf="isSelectionsNotEmpty()"
+                *ngIf="! isSelectionsEmpty()"
                 >
             <mat-icon class="delete-icon">
               delete
@@ -28,7 +28,7 @@
       <!-- Selected Count Header Column -->
       <ng-container matColumnDef="trash">
         <th mat-header-cell *matHeaderCellDef colspan="1" class="selected-count__header">
-          <p *ngIf="isSelectionsNotEmpty()" class="selected-count__text">
+          <p *ngIf="! isSelectionsEmpty()" class="selected-count__text">
              selected {{ selectionsCount() }}
           </p>
         </th>
@@ -87,19 +87,6 @@
           </a>
         </td>
       </ng-container>
-
-      <!-- delete Column -->
-      <!-- <ng-container matColumnDef="delete">
-        <th mat-header-cell *matHeaderCellDef></th>
-        <td mat-cell *matCellDef="let element">
-          <span (click)="removeAppUsers(userSelection.selected)" class="icon-container">
-            <mat-icon class="delete-icon">
-              delete
-            </mat-icon>
-        </span>
-
-        </td>
-      </ng-container> -->
 
       <tr mat-header-row *matHeaderRowDef="['trash', 'actions-spacer', 'totalSelections']" class="actions-row"></tr>
       <tr mat-header-row *matHeaderRowDef="displayedColumns" ></tr>

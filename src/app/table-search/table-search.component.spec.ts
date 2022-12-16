@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import AppUsersTableComponent from './app-users-table.component';
+import { TableSearchComponent } from './table-search.component';
 
-describe('AppUsersTableComponent', () => {
-  let component: AppUsersTableComponent;
-  let fixture: ComponentFixture<AppUsersTableComponent>;
+describe('TableSearchComponent', () => {
+  let component: TableSearchComponent;
+  let fixture: ComponentFixture<TableSearchComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ AppUsersTableComponent ]
+      declarations: [ TableSearchComponent ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(AppUsersTableComponent);
+    fixture = TestBed.createComponent(TableSearchComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
