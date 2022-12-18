@@ -7,17 +7,17 @@ import { Injectable } from '@angular/core';
 export class PaginationService {
 
   private pageNumber: BehaviorSubject<number> = new BehaviorSubject<number>(1);
-  private pageSize: BehaviorSubject<number> = new BehaviorSubject<number>(10);
+  private pageSize: BehaviorSubject<number> = new BehaviorSubject<number>(4);
   private totalCount: BehaviorSubject<number> = new BehaviorSubject<number>(4);
-
 
   pageNumber$: Observable<number> = this.pageNumber.asObservable();
   pageSize$: Observable<number> = this.pageSize.asObservable();
-  totalCount$: Observable<number> = this.pageSize.asObservable();
-
+  totalCount$: Observable<number> = this.totalCount.asObservable();
 
   setPageNumber(value: number) {
+    console.log("asdf")
     this.pageNumber.next(value);
+    console.log("asdf")
   }
 
   setPageSize(value: number) {
@@ -29,7 +29,6 @@ export class PaginationService {
   }
 
   constructor() { }
-
 
   notFirstPage() {
 

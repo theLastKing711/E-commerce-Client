@@ -1,4 +1,3 @@
-
 import { RouterModule } from '@angular/router';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -19,7 +18,7 @@ import { EmptyListComponent } from './empty-list/empty-list.component';
 import {MatRippleModule} from '@angular/material/core';
 import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
 import { MatSortModule } from '@angular/material/sort';
-import { TableSearchComponent } from '../table-search/table-search.component';
+import { TableSearchComponent } from './table-search/table-search.component';
 
 @NgModule({
   declarations: [
@@ -66,6 +65,7 @@ import { TableSearchComponent } from '../table-search/table-search.component';
     ConfirmationDialogComponent,
     MatSortModule,
     TableSearchComponent
+
   ]
 })
 export class SharedModule { }

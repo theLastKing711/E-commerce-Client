@@ -1,6 +1,6 @@
+import { TableSearchComponent } from './../table-search/table-search.component';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TableSearchComponent } from './table-search.component';
 
 describe('TableSearchComponent', () => {
   let component: TableSearchComponent;

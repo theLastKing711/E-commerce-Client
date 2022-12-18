@@ -1,3 +1,4 @@
+import { SecondInterceptor } from './Interceptors/SecondInterceptor';
 import { TokenInterceptor } from './Interceptors/TokenInterceptor';
 import { AuthGuard } from './auth/auth.guard';
 import { CoreModule } from './core/core.module';
@@ -20,7 +21,10 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     BrowserAnimationsModule,
     CoreModule
   ],
-  providers: [AuthGuard, { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true }],
+  providers: [AuthGuard,
+    { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: SecondInterceptor, multi: true },
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule { }

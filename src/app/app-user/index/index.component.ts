@@ -1,3 +1,4 @@
+import { query } from '@angular/animations';
 import { TableSearchService } from './../../table-search.service';
 import { FormBuilder, FormControl } from '@angular/forms';
 import { LoadingService } from './../../loading.service';
@@ -8,25 +9,23 @@ import { AddAppUserDialogComponent } from './../add-app-user-dialog/add-app-user
 import { AppUser } from 'src/types/appUser';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { AlertifyService } from './../../services/alertify.service';
-import { Subscription, switchMap, Observable, combineLatest, distinctUntilChanged, debounceTime, startWith, merge, filter, catchError, of, tap, map, interval } from 'rxjs';
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Subscription, switchMap, Observable, combineLatest, distinctUntilChanged, debounceTime, startWith, merge, filter, catchError, of, tap, map, interval, share, take, shareReplay } from 'rxjs';
+import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit } from '@angular/core';
 import { AppUserService } from 'src/app/services/app-user.service';
 import { EnhancedSelectionModel } from 'src/app/shared/utils/EnhancedSelectionModel';
-import { PageEvent } from '@angular/material/paginator';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { SubSink } from 'subsink';
 
 @Component({
   selector: 'app-index',
   templateUrl: './index.component.html',
   styleUrls: ['./index.component.scss']
 })
-export class IndexComponent implements OnInit, OnDestroy {
+export class IndexComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  AppUsersSubscription!: Subscription;
-  appUserDaliogSubscription!: Subscription;
-  deleteUserSubscription!: Subscription;
-  testSub!: Subscription;
-  testSub2!: Subscription;
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
 
+  private subs = new SubSink();
 
   loading$!: Observable<boolean>;
   pageNumber$!: Observable<number>;
@@ -34,7 +33,6 @@ export class IndexComponent implements OnInit, OnDestroy {
   totalCount$!: Observable<number>;
   appUsersList$!: Observable<AppUser[]>;
   delayedInitializedSearch$!: Observable<string>;
-  userTableVariables$!: Observable<any>;
 
   usersSelectionModel: EnhancedSelectionModel<AppUser> = new EnhancedSelectionModel<AppUser>(true);
 
@@ -53,8 +51,11 @@ export class IndexComponent implements OnInit, OnDestroy {
      private searchTableService: TableSearchService
   ) {
     this.appUsersList$ = this.appUserService.appUsersList$;
+
     this.pageNumber$ = this.paginationService.pageNumber$;
     this.pageSize$ = this.paginationService.pageSize$;
+    this.totalCount$ = this.paginationService.totalCount$;
+
     this.loading$ = loadingService.isLoading$;
     this.searchControl = this.fb.control('');
     this.delayedInitializedSearch$ = this.searchTableService.query$;
@@ -62,33 +63,56 @@ export class IndexComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
 
-  this.userTableVariables$ = combineLatest([this.pageNumber$, this.pageSize$, this.delayedInitializedSearch$]);
-
-  this.testSub = this.userTableVariables$
-      .pipe(
-        switchMap(
-          ([pageNumber, pageSize, query]) =>
-          {
-            console.log("first")
-            return this.appUserService.getAppUsers(pageNumber, pageSize, query)
-          }
-        ),
-        tap(x => console.log("second", x)),
-        tap(data => this.appUserService.setUsers([...data.data])),
-        tap(data => this.paginationService.setTotalCount(data.totalCount)),
-        tap(() => this.clearSelections())
-      )
-      .subscribe()
-
-      this.testSub2 = of(1).pipe(
-        switchMap(() => interval(1000)),
-      )
-      .subscribe(x => {
-        console.log("x", x)
-      });
 
   }
 
+  ngAfterViewInit(): void {
+
+
+    this.subs.sink = this.delayedInitializedSearch$
+                          .pipe(tap(x => console.log("users 1", x)))
+                          .subscribe(query => this.paginator.pageIndex = 0)
+
+    this.subs.sink = this.userTableVariables()
+                          .pipe(
+                          switchMap(
+                          ([page, query]) =>
+                          {
+                            const pageIndex = page.pageIndex + 1;
+                            const pageSize = page.pageSize
+
+                            console.log("users 2", page)
+                            return this.appUserService.getAppUsers(pageIndex, pageSize, query)
+                          }
+                          ),
+                            tap(x => console.log("users 3", x)),
+                            tap(data => this.appUserService.setUsers([...data.data])),
+                            tap(data => this.paginationService.setTotalCount(data.totalCount)),
+                            tap(() => this.clearSelections())
+                          )
+                          .subscribe()
+
+    console.log("paginator", this.paginator)
+
+
+    const observableOne = interval(1000).pipe(take(4), shareReplay(1));
+
+    observableOne.subscribe((emittedData) =>
+      console.log(`observer 1: ${emittedData}`)
+    );
+
+    setTimeout(() => {
+      observableOne.subscribe((emittedData) =>
+        console.log(`observer 2: ${emittedData}`)
+      );
+    }, 3000);
+
+
+  }
+
+  userTableVariables(): Observable<[PageEvent, string]> {
+    return combineLatest([this.paginator.page.pipe(startWith({pageIndex: 0, pageSize: 4} as PageEvent)), this.delayedInitializedSearch$]);
+  }
 
   openAddDialog(enterAnimationDuration: string, exitAnimationDuration: string): void {
     this.dialog.open(AddAppUserDialogComponent, {
@@ -98,19 +122,18 @@ export class IndexComponent implements OnInit, OnDestroy {
     });
   }
 
-  changePage(e: PageEvent) {
+  // changePage(e: PageEvent) {
 
-    const nextPage = e.pageIndex + 1;
+  //   const nextPage = e.pageIndex;
 
-    this.paginationService.setPageNumber(nextPage);
+  //   this.paginationService.setPageNumber(nextPage);
 
     // this.getAppUsers(nextPage, this.pageSize);
-  }
+  // }
 
   removeAppUsers(ids: number[]) {
 
     this.openDeleteConfirmationDialog("200", "200", "do you want to delete the selected users")
-        .afterClosed()
         .pipe(
           filter(isFormSubmitted => isFormSubmitted == true),
           switchMap(() => this.appUserService.removeAppUsers(ids)),
@@ -120,7 +143,7 @@ export class IndexComponent implements OnInit, OnDestroy {
 
   }
 
-  openDeleteConfirmationDialog(enterAnimationDuration: string, exitAnimationDuration: string, data: any): MatDialogRef<ConfirmationDialogComponent, any> {
+  openDeleteConfirmationDialog(enterAnimationDuration: string, exitAnimationDuration: string, data: any):Observable<any> {
 
     const confirmationDialogRef = this.dialog.open(ConfirmationDialogComponent, {
       enterAnimationDuration,
@@ -128,7 +151,7 @@ export class IndexComponent implements OnInit, OnDestroy {
       data: data
     })
 
-    return confirmationDialogRef;
+    return confirmationDialogRef.afterClosed();
 
   }
 
@@ -156,24 +179,7 @@ export class IndexComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-
-      if(this.AppUsersSubscription)
-      {
-        this.AppUsersSubscription.unsubscribe();
-      }
-
-      if(this.appUserDaliogSubscription) {
-        this.appUserDaliogSubscription.unsubscribe();
-      }
-
-      if(this.deleteUserSubscription) {
-        this.deleteUserSubscription.unsubscribe();
-      }
-
-    console.log("test sub", this.testSub)
-
-    this.testSub.unsubscribe();
-    this.testSub2.unsubscribe();
+    this.subs.unsubscribe();
   }
 
 }

@@ -1,16 +1,18 @@
-import { TableSearchService } from './../table-search.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormControl, FormBuilder } from '@angular/forms';
-import { debounceTime, distinctUntilChanged, map, Observable, startWith } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map, Observable, startWith, Subscription } from 'rxjs';
+import { TableSearchService } from 'src/app/table-search.service';
 
 @Component({
   selector: 'app-table-search',
   templateUrl: './table-search.component.html',
   styleUrls: ['./table-search.component.scss']
 })
-export class TableSearchComponent implements OnInit {
+export class TableSearchComponent implements OnInit, OnDestroy {
 
   public searchControl!: FormControl;
+
+  public searchSubscription!: Subscription;
 
   constructor(private fb: FormBuilder, private tableSearchService: TableSearchService) { }
 
@@ -18,7 +20,7 @@ export class TableSearchComponent implements OnInit {
 
     this.searchControl = this.fb.control('');
 
-    this.searchControl.valueChanges
+    this.searchSubscription = this.searchControl.valueChanges
                       .pipe(
                         map(x => x == "" ? "-1" : x),
                         distinctUntilChanged(),
@@ -29,5 +31,11 @@ export class TableSearchComponent implements OnInit {
                         this.tableSearchService.setQuery(query)
                       )
   }
+
+  ngOnDestroy(): void {
+
+    this.searchSubscription.unsubscribe();
+  }
+
 
 }

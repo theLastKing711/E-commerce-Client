@@ -32,7 +32,7 @@ export class AppUserService {
                                    .set('pageSize', pageSize)
                                    .set('query', query)
 
-    return this.httpClient.get<IPagination<AppUser>>(getApptUsersUrl, {params});
+    return this.httpClient.get<IPagination<AppUser>>(getApptUsersUrl, {params})
 
   }
 

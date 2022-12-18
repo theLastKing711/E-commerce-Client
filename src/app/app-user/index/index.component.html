@@ -17,7 +17,7 @@
     </button>
   </div>
 
-  <ng-container *ngIf="(appUsersList$ | async) as appUsersList">
+  <div *ngIf="(appUsersList$ | async) as appUsersList" class="mat-elevation-z8">
     <app-app-users-table
       (appUsersRemoved)="removeAppUsers($event)"
       (userSelectionFilled)="fillSelections($event)"
@@ -29,7 +29,16 @@
     >
     </app-app-users-table>
 
-  </ng-container>
+    <mat-paginator
+      [length]="totalCount$ | async"
+      [pageSize]="pageSize$ | async"
+      [pageSizeOptions]="[(pageSize$ | async)!]"
+      [pageIndex]="(pageNumber$ |async)! - 1"
+      aria-label="users pagination"
+    >
+    </mat-paginator>
+
+  </div>
 
   <app-empty-list
     *ngIf="! (appUsersList$ | async) as appUsersList"
@@ -37,4 +46,3 @@
   </app-empty-list>
 
 </ng-container>
-
