@@ -54,7 +54,7 @@ export class EnhancedSelectionModel<T extends {id : number}> extends SelectionMo
         return this.selected.length == 0;
     }
 
-    isItemChecked<T extends { id: number }>(selections:  SelectionModel<number>, item: T): boolean {
+    isItemChecked(selections:  SelectionModel<number>, item: T): boolean {
         return this.isSelected(item.id);
     }
 
