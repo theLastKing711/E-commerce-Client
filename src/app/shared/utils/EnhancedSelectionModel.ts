@@ -29,9 +29,19 @@ export class EnhancedSelectionModel<T extends {id : number}> extends SelectionMo
 
     }
 
-    isSelectionsToggeld<T>(list: T[])
+    isSelectionsToggeld(list: T[])
     {
+        return this.isSelectionsFull(list) && (! this.isListEmpty(list))
+    }
+
+    isSelectionsFull(list: T[]): boolean {
         return this.selected.length == list.length;
+    }
+
+
+    isListEmpty(list: T[]): boolean {
+        console.log("list", list.length == 0)
+        return list.length == 0;
     }
 
     toggleSelection(item: T)
@@ -44,16 +54,13 @@ export class EnhancedSelectionModel<T extends {id : number}> extends SelectionMo
         return this.selected.length == 0;
     }
 
-    isSelectionsFull(list: T[]): boolean {
-        return this.selected.length == list.length;
-    }
-
     isItemChecked<T extends { id: number }>(selections:  SelectionModel<number>, item: T): boolean {
         return this.isSelected(item.id);
     }
 
+
     isToggleSelectionsIndeterminate(list: T[]): boolean {
-        return ! this.isSelectionsEmpty() &&  ! this.isSelectionsFull(list);
+        return ! this.isSelectionsEmpty() &&  ! this.isSelectionsFull(list) &&  !(this.isListEmpty(list));
     }
 
     selectionsCount(): number {
