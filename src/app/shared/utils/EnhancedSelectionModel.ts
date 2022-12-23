@@ -21,9 +21,9 @@ export class EnhancedSelectionModel<T extends {id : number}> extends SelectionMo
         this.initSelections(this);
     }
 
-    fillSelections(mappedList: T[]) {
+    fillSelections(list: T[]) {
 
-        const usersId = mappedList.map(x => x.id);
+        const usersId = list.map(x => x.id);
         this.select(...usersId)
         this.initSelections(this);
 
