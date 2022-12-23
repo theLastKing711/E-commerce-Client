@@ -1,5 +1,5 @@
 import { IPagination } from './../../types/base';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { Observable, BehaviorSubject, share, shareReplay } from 'rxjs';
 import { environment } from './../../environments/environment';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';

@@ -10,7 +10,7 @@ import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChange
 })
 
 
-export class AppUsersTableComponent {
+export class AppUsersTableComponent<T extends {id: number}> {
 
   @Input() userSelection!: EnhancedSelectionModel<AppUser>;
   @Input() appUsersList!: AppUser[];

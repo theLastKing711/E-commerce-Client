@@ -30,6 +30,11 @@ export class AuthService {
 
   }
 
+  logout() {
+
+    this.storageService.removeFromStorage("access_token")
+  }
+
   getUser(): string | null {
     const token = this.storageService.getFromStroage<IToken>("access_token");
 

@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormControl, FormBuilder } from '@angular/forms';
-import { debounceTime, distinctUntilChanged, map, Observable, startWith, Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map, Observable, startWith, Subscription, tap } from 'rxjs';
 import { TableSearchService } from 'src/app/table-search.service';
 
 @Component({
@@ -25,7 +25,6 @@ export class TableSearchComponent implements OnInit, OnDestroy {
                         map(x => x == "" ? "-1" : x),
                         distinctUntilChanged(),
                         debounceTime(150),
-                        startWith('-1')
                       )
                       .subscribe( query =>
                         this.tableSearchService.setQuery(query)

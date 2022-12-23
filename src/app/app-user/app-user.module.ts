@@ -7,6 +7,7 @@ import { IndexComponent } from './index/index.component';
 import { AppUsersTableComponent } from './app-users-table/app-users-table.component';
 import { AppUserDetailsComponent } from './app-user-details/app-user-details.component';
 import { AddAppUserDialogComponent } from './add-app-user-dialog/add-app-user-dialog.component';
+import { SelectionTableComponent } from './selection-table/selection-table.component';
 
 
 @NgModule({
@@ -15,6 +16,7 @@ import { AddAppUserDialogComponent } from './add-app-user-dialog/add-app-user-di
     AppUsersTableComponent,
     AppUserDetailsComponent,
     AddAppUserDialogComponent,
+    SelectionTableComponent,
   ],
   imports: [
     CommonModule,

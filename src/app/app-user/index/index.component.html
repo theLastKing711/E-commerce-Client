@@ -18,25 +18,67 @@
   </div>
 
   <div *ngIf="(appUsersList$ | async) as appUsersList" class="mat-elevation-z8">
-    <app-app-users-table
+
+    <app-selection-table
       (appUsersRemoved)="removeAppUsers($event)"
       (userSelectionFilled)="fillSelections($event)"
       (userSelectionCleared)="clearSelections()"
       (userSelectionItemToggled)="toggleSelection($event)"
       [displayedColumns]="displayedColumns"
-      [appUsersList]="appUsersList"
+      [tableList]="appUsersList"
       [userSelection]="usersSelectionModel"
     >
-    </app-app-users-table>
 
-    <mat-paginator
-      [length]="totalCount$ | async"
-      [pageSize]="pageSize$ | async"
-      [pageSizeOptions]="[(pageSize$ | async)!]"
-      [pageIndex]="(pageNumber$ |async)! - 1"
-      aria-label="users pagination"
-    >
-    </mat-paginator>
+      <!-- Id Column -->
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef> Id </th>
+        <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+      </ng-container>
+
+      <!-- user name Column -->
+      <ng-container matColumnDef="username">
+        <th mat-header-cell *matHeaderCellDef> username </th>
+        <td mat-cell *matCellDef="let element"> {{element.username}} </td>
+      </ng-container>
+
+      <!-- email Column -->
+      <ng-container matColumnDef="email">
+        <th mat-header-cell *matHeaderCellDef> email </th>
+        <td mat-cell *matCellDef="let element"> {{element.email}} </td>
+      </ng-container>
+
+      <!-- createdAt Column -->
+      <ng-container matColumnDef="createdAt">
+        <th mat-header-cell *matHeaderCellDef> Date Created </th>
+        <td mat-cell *matCellDef="let element"> {{element.createdAt | date: 'y' || null}} </td>
+      </ng-container>
+
+      <!-- details Column -->
+      <ng-container matColumnDef="details">
+        <th mat-header-cell *matHeaderCellDef> Details </th>
+        <td mat-cell *matCellDef="let element">
+          <a [routerLink]="['/users', element.id]" class="icon-container">
+            <mat-icon color="red">
+              remove_red_eye
+            </mat-icon>
+          </a>
+        </td>
+      </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns" ></tr>
+    <tr  mat-row *matRowDef="let row; columns: displayedColumns;" ></tr>
+
+  </app-selection-table>
+
+  <mat-paginator
+    [length]="totalCount$ | async"
+    [pageSize]="pageSize$ | async"
+    [pageSizeOptions]="[(pageSize$ | async)!]"
+    [pageIndex]="(pageNumber$ |async)! - 1"
+    (page)="changePage($event)"
+    aria-label="users pagination"
+  >
+  </mat-paginator>
 
   </div>
 
