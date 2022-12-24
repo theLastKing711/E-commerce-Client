@@ -42,7 +42,7 @@ export class ProductDetailsComponent implements OnInit, OnDestroy {
     name: new FormControl('', Validators.required),
     price: new FormControl(0, Validators.required),
     categoryId: new FormControl(0, Validators.required),
-    isPopular: new FormControl(false, Validators.required),
+    isPopular: new FormControl(false),
     image: new FormControl('', Validators.required)
   });
 

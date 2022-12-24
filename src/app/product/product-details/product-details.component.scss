@@ -2,8 +2,6 @@
   margin-bottom: 1rem;
 }
 
-
-
 .mat-form-field {
   margin-bottom: 1rem;
   display: block;
@@ -11,7 +9,7 @@
 
 .product-image {
   height: 250px;
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .delete-button {
