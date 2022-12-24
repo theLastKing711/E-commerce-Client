@@ -1,22 +1,36 @@
-
-
-
 .image-container {
 
   padding: 1rem;
 
 }
 
-  .product-image {
+.product-image {
     border-radius: 3px;
     height: 300px;
     width: 100%;
-    object-fit: cover;
-    // object-position: 50% 50%;
+    object-fit: contain;
 }
 
 .category-name, .category-price {
   padding: 0 1rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
+.product-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
 
+.product-cards {
+  display: grid;
+  row-gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr))
+}
+
+.product-details-link {
+  margin-top: auto;
+}

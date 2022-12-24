@@ -7,6 +7,7 @@ import { IndexComponent } from './index/index.component';
 import { ProductsTableComponent } from './products-table/products-table.component';
 import { AddProductDialogComponent } from './add-product-dialog/add-product-dialog.component';
 import { ProductDetailsComponent } from './product-details/product-details.component';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 
 @NgModule({
@@ -19,7 +20,7 @@ import { ProductDetailsComponent } from './product-details/product-details.compo
   imports: [
     CommonModule,
     ProductRoutingModule,
-    SharedModule
+    SharedModule,
   ]
 })
 export class ProductModule { }
