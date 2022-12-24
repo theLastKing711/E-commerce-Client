@@ -11,7 +11,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 })
 
 
-export class AsideComponent implements OnInit, OnDestroy {
+export class AsideComponent {
 
    routerSubscription!: Subscription;
 
@@ -24,30 +24,6 @@ export class AsideComponent implements OnInit, OnDestroy {
       {name: "stats", path: "/stats"},
     ];
 
-  constructor(private router: Router, private route: ActivatedRoute) { }
 
-  ngOnInit(): void {
-
-    this.routerSubscription = this.router.events.subscribe(event => {
-      if(event instanceof NavigationEnd)
-      {
-        const mainPath = "/" + event.url.split('/')[1]
-        this.activeRoute = mainPath;
-      }
-    })
-
-  }
-
-
-  updateActiveRoute(route: string) {
-    this.activeRoute = route;
-  }
-
-  ngOnDestroy(): void {
-      if(this.routerSubscription)
-      {
-        this.routerSubscription.unsubscribe();
-      }
-  }
 
 }

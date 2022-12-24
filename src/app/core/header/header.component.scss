@@ -118,7 +118,7 @@
 
   justify-content: flex-end !important;
   gap: 1.5rem;
-  @media screen and (max-width: 700px) {
+  @media screen and (max-width: 900px) {
 
     display: none !important;
   }
@@ -128,7 +128,7 @@
 
   background-color: rgba(0, 0, 0, 0.5) !important;
 
-  @media screen and (max-width: 700px) {
+  @media screen and (max-width: 900px) {
     position: fixed;
     z-index: 1000;
     top: 0;
@@ -162,7 +162,7 @@
   display: none;
 
 
-  @media screen and (max-width: 700px) {
+  @media screen and (max-width: 900px) {
     display: inline-block;
     cursor: pointer;
 
@@ -176,7 +176,7 @@
 
 .mobile-nav-container {
 
-  @media screen and (max-width: 700px) {
+  @media screen and (max-width: 900px) {
     width: 100%;
 
   }

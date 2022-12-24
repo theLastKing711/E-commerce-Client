@@ -4,9 +4,9 @@
 
     <li *ngFor="let route of routes">
       <a
-        [routerLink]="[route.path]" class="app-aside__link d-block"
-        [ngClass]="{'route-active':route.path == activeRoute}"
-        (click)="updateActiveRoute(route.path)"
+        routerLinkActive="route-active"
+        [routerLink]="[route.path]"
+        class="app-aside__link d-block"
       >
         {{ route.name }}
       </a>
