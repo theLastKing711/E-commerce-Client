@@ -8,7 +8,7 @@ import { AppUser } from 'src/types/appUser';
   templateUrl: './selection-table.component.html',
   styleUrls: ['./selection-table.component.scss']
 })
-export class SelectionTableComponent<T extends {id: number}> implements AfterViewInit, OnInit {
+export class SelectionTableComponent<T extends {id: number}> {
 
   @ViewChild(MatTable) table!: MatTable<T>;
 
@@ -25,24 +25,16 @@ export class SelectionTableComponent<T extends {id: number}> implements AfterVie
   @ContentChildren(MatColumnDef) columnDefs!: QueryList<MatColumnDef>;
 
 
-  constructor()
-  {
-    console.log("table list", this.tableList)
-    console.log("table List", this.tableList)
-  }
-
-  ngOnInit(): void {
-    console.log("table list 2", this.tableList)
-  }
-
   ngAfterViewInit(): void {
-    console.log("table", this.table)
+
+    console.log("type of this", typeof this)
+
     this.columnDefs.forEach(columnDef => this.table.addColumnDef(columnDef));
     this.rowDefs.forEach(rowDef => this.table.addRowDef(rowDef));
     this.headerRowDefs.forEach(headerRowDef => this.table.addHeaderRowDef(headerRowDef));
   }
 
-  get getSpacerWidth() {
+  get getSelectioHeaderSpacerWidth() {
     return this.displayedColumns.length - 2;
   }
 

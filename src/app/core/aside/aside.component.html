@@ -6,6 +6,7 @@
         routerLinkActive="route-active"
         [routerLink]="[route.path]"
         class="app-aside__link d-block"
+        *appForRole="route.roles"
       >
         {{ route.name }}
       </a>

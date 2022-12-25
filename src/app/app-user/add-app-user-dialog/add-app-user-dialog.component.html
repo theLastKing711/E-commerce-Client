@@ -39,7 +39,7 @@
       mat-dialog-close color="primay"
       type="submit"
       (click)="addAppUser()"
-      [disabled]="formNotValid()"
+      [disabled]="! formValid()"
     >
     Submit
   </button>

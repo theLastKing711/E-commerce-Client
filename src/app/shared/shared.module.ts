@@ -25,7 +25,7 @@ import { TableSearchComponent } from './table-search/table-search.component';
     LoadingComponent,
     EmptyListComponent,
     ConfirmationDialogComponent,
-    TableSearchComponent
+    TableSearchComponent,
   ],
   imports: [
     CommonModule,

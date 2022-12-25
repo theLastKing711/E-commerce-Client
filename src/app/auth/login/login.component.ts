@@ -18,10 +18,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   loginSubscription!: Subscription;
 
   constructor(
-    private alertifyService: AlertifyService,
     private authService: AuthService,
-    private storageService: StorageService,
-    private router: Router,
     ) { }
 
   ngOnInit(): void {
@@ -47,14 +44,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
 
     this.loginSubscription =  this.authService.login(user)
-                                                .subscribe(result => {
-
-                                                  this.storageService.addToStorage("access_token", result);
-
-
-                                                  this.alertifyService.success(`Welcome ${result.username}`);
-                                                  this.router.navigate(['/categories'])
-                                                });
+                                              .subscribe();
   }
 
   formNotValid() {

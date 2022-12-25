@@ -11,7 +11,7 @@ import { AppUserDialogService } from 'src/app/services/app-user-dialog.service';
   templateUrl: './add-app-user-dialog.component.html',
   styleUrls: ['./add-app-user-dialog.component.scss']
 })
-export class AddAppUserDialogComponent implements OnInit {
+export class AddAppUserDialogComponent {
 
   constructor(
       private appUserService: AppUserService,
@@ -25,15 +25,11 @@ export class AddAppUserDialogComponent implements OnInit {
  productForm = new FormGroup({
    username: new FormControl('', Validators.required),
    email: new FormControl('', [Validators.required, Validators.email]),
-   password: new FormControl(''),
+   password: new FormControl('', [Validators.required]),
    image: new FormControl('', Validators.required)
  });
 
- ngOnInit(): void {
- }
-
-
-uploadFile(e: any) {
+  uploadFile(e: any) {
     const file = e.target.files[0];
 
     this.productForm.patchValue({
@@ -42,42 +38,47 @@ uploadFile(e: any) {
 
   }
 
- formNotValid() {
-  return  !this.productForm.valid
+ formValid() {
+  return  this.productForm.valid
  }
 
  addAppUser() {
 
   this.loading = true;
 
-   const formData = new FormData();
+   const userFormData: FormData = this.buildForm(this.productForm);
 
-   const form = this.productForm;
-
-   const username = form.get('username')?.value!;
-
-   const email = form.get('email')?.value!;
-
-   const password = form.get('password')?.value!;
-
-   const image = form.get('image')?.value!;
-
-   formData.append("username", username);
-
-   formData.append('email', email);
-
-   formData.append('password', password);
-
-   formData.append('image', image);
-
-
-   this.appUserService.addAppUser(formData)
+   this.appUserService.addAppUser(userFormData)
                        .subscribe(appUser => {
                          this.dialogService.sendUser(appUser);
                          this.alertifyService.success("Product added successfully")
                          this.loading = false;
                          this.dialogRef.close();
                        })
+ }
+
+ buildForm(form: FormGroup<any>): FormData {
+
+  const username = form.get('username')?.value!;
+
+  const email = form.get('email')?.value!;
+
+  const password = form.get('password')?.value!;
+
+  const image = form.get('image')?.value!;
+
+  const formData = new FormData();
+
+  formData.append("username", username);
+
+  formData.append('email', email);
+
+  formData.append('password', password);
+
+  formData.append('image', image);
+
+  return formData;
+
  }
 
 

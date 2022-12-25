@@ -19,3 +19,10 @@ export interface IToken {
   token: string,
   expiration: string
 }
+
+
+export enum Role {
+  Admin = "Admin",
+  User = "User"
+
+}

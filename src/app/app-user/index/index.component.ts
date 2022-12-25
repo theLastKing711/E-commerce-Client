@@ -48,7 +48,8 @@ export class IndexComponent implements AfterViewInit, OnDestroy {
      private paginationService: PaginationService,
      private loadingService: LoadingService,
      private fb: FormBuilder,
-     private searchTableService: TableSearchService
+     private searchTableService: TableSearchService,
+     private addDialogService: AppUserDialogService
   ) {
     this.appUsersList$ = this.appUserService.appUsersList$;
 
@@ -63,11 +64,11 @@ export class IndexComponent implements AfterViewInit, OnDestroy {
 
   ngAfterViewInit(): void {
 
-    this.initPageNumberAndDependentsChangeSubscriptions();
+    this.initPageNumberSubscriptions();
 
   }
 
-  initPageNumberAndDependentsChangeSubscriptions(): void {
+  initPageNumberSubscriptions(): void {
 
     this.handlePageNumberChange();
 
@@ -81,7 +82,7 @@ export class IndexComponent implements AfterViewInit, OnDestroy {
     this.subs.sink = this.tablePageNumberVariables()
     .pipe(
       switchMap(
-        ([pageNumber, query, pageSize]) =>
+        ([pageNumber, query, pageSize, addedUser]) =>
         {
           const pageIndex = pageNumber;
 
@@ -103,16 +104,30 @@ export class IndexComponent implements AfterViewInit, OnDestroy {
     return this.pageNumber$.pipe(
       withLatestFrom(
         this.delayedInitializedSearch$.pipe(startWith("-1")),
-        this.pageSize$
+        this.pageSize$,
+        this.addDialogService.subject$.pipe(startWith({} as AppUser))
     ))
 
   }
 
   handlePageNumberDependentsChange(): void  {
 
+    this.handleSearchInputChange();
+    this.handleUseradded();
+
+  }
+
+  handleSearchInputChange(): void {
     this.subs.sink = this.delayedInitializedSearch$
                          .pipe(tap(x => console.log("users 1", x)))
-                         .subscribe(query => this.paginationService.setPageNumber(1));
+                         .subscribe(_ => this.paginationService.setPageNumber(1));
+  }
+
+  handleUseradded(): void {
+
+    this.subs.sink = this.addDialogService.subject$
+                          .subscribe(_ => this.paginationService.setPageNumber(1));
+
   }
 
 
@@ -134,7 +149,7 @@ export class IndexComponent implements AfterViewInit, OnDestroy {
 
   }
 
-  removeAppUsers(ids: number[]) {
+  removeAppUsers(ids: number[]): void {
 
     this.deleteUserDialogClosed("200", "200", "do you want to delete the selected users")
         .pipe(
@@ -158,27 +173,27 @@ export class IndexComponent implements AfterViewInit, OnDestroy {
 
   }
 
-  clearSelections() {
+  clearSelections(): void {
     this.usersSelectionModel.clearSelections();
-    this.usersSelectionModel.initSelections(this.usersSelectionModel)
+    this.usersSelectionModel = this.usersSelectionModel.initSelections(this.usersSelectionModel)
   }
 
   fillSelections(list: AppUser[]) {
 
     this.usersSelectionModel.fillSelections(list);
-    this.usersSelectionModel.initSelections(this.usersSelectionModel)
+    this.usersSelectionModel = this.usersSelectionModel.initSelections(this.usersSelectionModel)
 
   }
 
   toggleSelection(item: AppUser)
   {
     this.usersSelectionModel.toggleSelection(item);
-    this.usersSelectionModel.initSelections(this.usersSelectionModel);
+    this.usersSelectionModel = this.usersSelectionModel.initSelections(this.usersSelectionModel);
   }
 
   initSelections(list: AppUser[]) {
 
-    this.usersSelectionModel.initSelections(this.usersSelectionModel);
+    this.usersSelectionModel = this.usersSelectionModel.initSelections(this.usersSelectionModel);
   }
 
   ngOnDestroy(): void {
