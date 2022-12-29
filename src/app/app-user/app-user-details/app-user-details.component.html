@@ -45,7 +45,7 @@
 
               <div class="mb-4 col-md-4">
                 <mat-label>User Image: </mat-label>
-                <input type="file" (change)="uploadFile($event)" class="mt-2" />
+                <input type="file" (change)="uploadFile($event)" class="mt-2" [] />
                 <img [src]="imgUrl || (imagesPath + appUser.imagePath)" alt="AppUser image" class="mt-2 w-100 AppUser-image"/>
               </div>
 
@@ -68,8 +68,7 @@
             <div class="d-flex justify-content-between card-actions">
               <button mat-raised-button color="primary" class="py-1 px-5" type="submit" [disabled]="formNotValid()">submit</button>
               <div class="d-flex card-actions">
-                <button type="button" mat-raised-button color="warn" class="py-1 px-5 delete-button" (click)="removeAppUser(id)">delete</button>
-
+                <button type="button" mat-raised-button color="warn" class="py-1 px-5 delete-button" (click)="removeUser.next(id)">delete</button>
                 <button mat-stroked-button color="primary" class="m-0 p-0" type="button">
                   <a  routerLink="/users" class="d-block py-1 px-5 ">
                     cancel
