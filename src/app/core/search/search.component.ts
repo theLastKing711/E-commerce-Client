@@ -54,11 +54,6 @@ export class SearchComponent implements OnInit {
     return this.storageService.isAuthenticated();
   }
 
-
-  getLoggedUser() {
-    return this.authService.getUser();
-  }
-
   logout() {
     this.alertifyService.warning("Logged out successfully")
     this.storageService.removeFromStorage("access_token")

@@ -52,13 +52,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.headerBackDropService.deActivateBackDrop();
   }
 
-  isLoggedIn() {
+  isUserLoggedIn() {
     return this.storageService.isAuthenticated();
   }
 
 
   getLoggedUser() {
-    return this.authService.getUser();
+    return this.authService.getUsername();
   }
 
   logout() {

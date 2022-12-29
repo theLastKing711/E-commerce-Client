@@ -1,12 +1,8 @@
-import { HttpClient } from '@angular/common/http';
 import { AuthService } from './../../services/auth.service';
 import { ILogin } from './../../../types/auth';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { AlertifyService } from 'src/app/services/alertify.service';
-import { StorageService } from 'src/app/services/storage.service';
 
 @Component({
   selector: 'app-login',
@@ -33,8 +29,6 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   login() {
 
-    const loginFormValues = this.loginForm;
-
     const username = this.loginForm.get('username')?.value!;
     const password = this.loginForm.get('password')?.value!;
 
@@ -49,7 +43,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   formNotValid() {
     return  !this.loginForm.valid
-   }
+  }
 
   hasError(key: string) {
 

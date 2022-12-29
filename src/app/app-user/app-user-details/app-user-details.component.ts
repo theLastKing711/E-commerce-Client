@@ -1,13 +1,18 @@
+import { IRoleItem, Role } from 'src/types/auth';
+import { RoleManagerService } from './../../services/role-manager.service';
 import { LoadingService } from './../../loading.service';
 import { AppUserService } from 'src/app/services/app-user.service';
-import { AppUser } from 'src/types/appUser';
+import { AppUser, AddAppUser } from 'src/types/appUser';
 import { Component, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AlertifyService } from 'src/app/services/alertify.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { environment } from 'src/environments/environment';
-import { switchMap, Observable } from 'rxjs';
+import { switchMap, Observable, forkJoin } from 'rxjs';
+import { roleHintsMessages } from 'src/app/constants/constants';
+
+
 
 @Component({
   selector: 'app-app-user-details',
@@ -18,6 +23,9 @@ export class AppUserDetailsComponent implements OnInit {
 
   id!: number;
   appUser!: AppUser
+  roles!: IRoleItem[];
+
+  roleHints = roleHintsMessages;
 
   deletAppUserrSubscription!: Subscription;
   updatAppUserrSubscription!: Subscription;
@@ -31,6 +39,7 @@ export class AppUserDetailsComponent implements OnInit {
   loading$!: Observable<boolean>;
 
   constructor(private appUserService: AppUserService,
+              private roleService: RoleManagerService,
               private route: ActivatedRoute,
               private router: Router,
               private alertifyService: AlertifyService,
@@ -40,9 +49,11 @@ export class AppUserDetailsComponent implements OnInit {
               }
 
   appUserForm = new FormGroup({
+    id: new FormControl(''),
     username: new FormControl('', Validators.required),
     email: new FormControl('', [Validators.required, Validators.email]),
     password: new FormControl(''),
+    roleName: new FormControl('', [Validators.required]),
     image: new FormControl('', Validators.required)
   });
 
@@ -52,22 +63,28 @@ export class AppUserDetailsComponent implements OnInit {
       this.loadingService.showLoading();
 
       const id = parseInt(param.get('id')!);
+
+      this.appUserForm.patchValue({
+        id: id.toString()
+      })
+
       this.id = id;
-      return this.appUserService.getAppUserById(id)
+      return forkJoin([this.appUserService.getAppUserById(id), this.roleService.getAllRoles()])
 
     }))
-    .subscribe(result => {
+    .subscribe( ([user, roles]) => {
 
-      const appUser = result
+      this.appUser = {...user}
 
-      this.appUser = {...appUser as AppUser}
+      console.log("appUser", this.appUser)
 
-      console.log("app user", this.appUser)
+      this.roles = [...roles];
 
       this.appUserForm.patchValue({
         username: this.appUser.username,
         password: "",
         email: this.appUser.email,
+        roleName: this.appUser.roleName,
         image: this.appUser.imagePath,
       })
 
@@ -101,30 +118,11 @@ export class AppUserDetailsComponent implements OnInit {
 
      this.loadingService.showLoading();
 
-     const formData = new FormData();
+     const user = this.GetUserData(this.appUserForm);
 
-     const form = this.appUserForm;
+     const userFormData: FormData = this.getUserFormData(user);
 
-     const username = form.get('username')?.value!;
-
-     const email = form.get('email')?.value!;
-
-     const password = form.get('password')?.value!;
-
-     const image = form.get('image')?.value!;
-
-     formData.append("id", this.id.toString());
-
-     formData.append("username", username);
-
-     formData.append('email', email);
-
-     formData.append('password', password);
-
-     formData.append('image', image);
-
-
-     this. updatAppUserrSubscription = this.appUserService.updateAppUser(formData, this.id)
+     this. updatAppUserrSubscription = this.appUserService.updateAppUser(userFormData, this.id)
                          .subscribe(appUser => {
                            this.alertifyService.success("appUser updated successfully");
                            this.loadingService.hideLoading();
@@ -132,12 +130,62 @@ export class AppUserDetailsComponent implements OnInit {
                          })
    }
 
-   hasError(key: string) {
+   GetUserData(form: FormGroup<any>): AddAppUser {
 
-     const isEmpty: boolean = this.appUserForm.get(key)?.value == ""
+    const id = form.get('id')?.value;
 
-     return this.appUserForm.get(key)?.pristine || (isEmpty)
+      const username = form.get('username')?.value!;
+
+      const email = form.get('email')?.value!;
+
+      const password = form.get('password')?.value!;
+
+      const roleName = form.get('roleName')?.value!;
+
+      const image = form.get('image')?.value!;
+
+      const user: AddAppUser = {
+        id,
+        username,
+        email,
+        password,
+        image: image,
+        roleName,
+      }
+
+      return user
+
    }
+
+   getUserFormData(user: AddAppUser): FormData {
+
+      const formData: FormData = new FormData();
+
+      formData.append("id", this.id.toString());
+
+      formData.append("username", user.username!);
+
+      formData.append('email', user.email!);
+
+      formData.append('password', user.password!);
+
+      formData.append('roleName', user.roleName!);
+
+      formData.append('image', user.image!);
+
+      return formData;
+   }
+
+   getRoleHint() {
+    return this.roleHints[this.appUserForm.get('roleName')?.value!]
+   }
+
+   hasError(key: string, errorName: string) {
+
+    const isEmpty: boolean = this.appUserForm.get(key)?.hasError(errorName)!;
+
+    return  isEmpty
+  }
 
    removeAppUser(id: number) {
     this.deletAppUserrSubscription = this.appUserService.removeAppUser(id)

@@ -23,7 +23,7 @@
                 <mat-form-field appearance="fill">
                   <mat-label>Username</mat-label>
                   <input matInput formControlName="username">
-                  <mat-error *ngIf="hasError('name')">Username is required</mat-error>
+                  <mat-error *ngIf="hasError('username', 'required')">Username is required</mat-error>
                 </mat-form-field>
               </div>
 
@@ -32,7 +32,7 @@
                 <mat-form-field appearance="fill">
                   <mat-label>email</mat-label>
                   <input matInput formControlName="email">
-                  <mat-error *ngIf="hasError('email')">Username is required</mat-error>
+                  <mat-error *ngIf="hasError('email', 'required')">Email is required</mat-error>
                 </mat-form-field>
               </div>
 
@@ -47,6 +47,18 @@
                 <mat-label>User Image: </mat-label>
                 <input type="file" (change)="uploadFile($event)" class="mt-2" />
                 <img [src]="imgUrl || (imagesPath + appUser.imagePath)" alt="AppUser image" class="mt-2 w-100 AppUser-image"/>
+              </div>
+
+              <div class="mb-4 col-md-4">
+                <mat-form-field appearance="fill">
+                  <mat-select placeholder="Role" formControlName="roleName">
+                    <mat-option *ngFor="let role of roles" [value]="role.name">
+                      {{ role.name }}
+                    </mat-option>
+                  </mat-select>
+                  <mat-hint>{{ getRoleHint() }}</mat-hint>
+                  <mat-error *ngIf="hasError('roleName', 'required')">Role is required</mat-error>
+                </mat-form-field>
               </div>
 
           </div>

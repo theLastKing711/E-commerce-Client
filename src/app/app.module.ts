@@ -1,7 +1,7 @@
+import { RoleGuard } from './guards/role.guard';
 import { ErrorInterceptor } from './Interceptors/ErrorInterceptor';
 import { SecondInterceptor } from './Interceptors/SecondInterceptor';
 import { TokenInterceptor } from './Interceptors/TokenInterceptor';
-import { AuthGuard } from './auth/auth.guard';
 import { CoreModule } from './core/core.module';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
@@ -10,6 +10,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { JwtHelperService, JWT_OPTIONS } from '@auth0/angular-jwt';
+import { AuthGuard } from './guards/auth.guard';
 
 
 @NgModule({
@@ -23,7 +24,9 @@ import { JwtHelperService, JWT_OPTIONS } from '@auth0/angular-jwt';
     BrowserAnimationsModule,
     CoreModule,
   ],
-  providers: [AuthGuard,
+  providers: [
+    AuthGuard,
+    RoleGuard,
     { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: SecondInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true},

@@ -1,4 +1,3 @@
-import { AuthGuard } from './../auth/auth.guard';
 import { SharedModule } from './../shared/shared.module';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -17,7 +16,6 @@ import { CategoryDetailsComponent } from './category-details/category-details.co
     CategoriesTableComponent,
     CategoryDetailsComponent
   ],
-  providers: [AuthGuard],
   imports: [
     CommonModule,
     CategoryRoutingModule,

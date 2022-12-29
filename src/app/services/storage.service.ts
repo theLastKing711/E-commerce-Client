@@ -30,12 +30,12 @@ export class StorageService {
     }
   }
 
-  getFromStroage<T>(key: string): T | null {
+  getFromStroage<T>(key: string): T | unknown {
 
     let item = this.getItem(key)
 
     if(item != null) {
-      return JSON.parse(item) as T
+      return JSON.parse(item)
     }
 
 

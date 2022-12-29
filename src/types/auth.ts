@@ -23,6 +23,12 @@ export interface IToken {
 
 export enum Role {
   Admin = "Admin",
-  User = "User"
+  User = "User",
+  SalesManger = "SalesManager"
+}
 
+
+export interface IRoleItem {
+  id: number;
+  name: string
 }

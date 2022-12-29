@@ -1,7 +1,15 @@
+import { RoleGuard } from './guards/role.guard';
+import { Role } from 'src/types/auth';
 import { AppUserModule } from './app-user/app-user.module';
-import { AuthGuard } from './auth/auth.guard';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { AuthGuard } from './guards/auth.guard';
+
+
+const AdminRole: Role[] = [Role.Admin]
+
+const AdminAndSalesManagerRoles: Role[] = [Role.Admin, Role.SalesManger]
+
 
 const routes: Routes = [
   {
@@ -12,27 +20,42 @@ const routes: Routes = [
   {
     path: 'users',
     loadChildren: () => import('./app-user/app-user.module').then(m => m.AppUserModule),
-    canActivate: [AuthGuard]
+    canActivate: [AuthGuard, RoleGuard],
+    data: {
+      roles: AdminRole
+    }
   },
   {
     path: 'categories',
     loadChildren: () => import('./category/category.module').then(m => m.CategoryModule),
-    canActivate: [AuthGuard]
+    canActivate: [AuthGuard, RoleGuard],
+    data: {
+      roles: AdminAndSalesManagerRoles
+    }
   },
   {
     path: 'products',
     loadChildren: () => import('./product/product.module').then(m => m.ProductModule),
-    canActivate: [AuthGuard]
+    canActivate: [AuthGuard, RoleGuard],
+    data: {
+      roles: AdminAndSalesManagerRoles
+    }
   },
   {
     path: 'invoices',
     loadChildren: () => import('./invoice/invoice.module').then(m => m.InvoiceModule),
-    canActivate: [AuthGuard]
+    canActivate: [AuthGuard, RoleGuard],
+    data: {
+      roles: AdminAndSalesManagerRoles
+    }
   },
   {
     path: 'stats',
     loadChildren: () => import('./stats/stats.module').then(m => m.StatsModule),
-    canActivate: [AuthGuard]
+    canActivate: [AuthGuard, RoleGuard],
+    data: {
+      roles: AdminAndSalesManagerRoles
+    }
   },
   {
     path: 'authentication',

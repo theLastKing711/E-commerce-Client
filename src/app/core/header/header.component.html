@@ -15,10 +15,10 @@
         <mat-icon>close icon</mat-icon>
       </button>
 
-    <app-search class="search-items" *ngIf="isLoggedIn()"></app-search>
+    <app-search class="search-items" *ngIf="isUserLoggedIn()"></app-search>
 
     <nav class="app-header__action">
-      <ul *ngIf="! isLoggedIn()" class="d-flex app-header__list gap-4">
+      <ul *ngIf="! isUserLoggedIn()" class="d-flex app-header__list gap-4">
 
         <li>
           <a [routerLink]="['/authentication/register']"  class="app-header__item">
@@ -35,14 +35,14 @@
           </a>
         </li>
       </ul>
-      <ul *ngIf="isLoggedIn()" class="d-flex app-header__list gap-4">
+      <ul *ngIf="isUserLoggedIn()" class="d-flex app-header__list gap-4">
         <li>
           <h2 class="app-header__item">
             welcome:  {{ getLoggedUser() }}
           </h2>
         </li>
         <li>
-          <a [routerLink]="['/authentication/register']" *ngIf="isLoggedIn()" class="app-header__item">
+          <a [routerLink]="['/authentication/register']" *ngIf="isUserLoggedIn()" class="app-header__item">
             <span (click)="logout()">
               Logout
             </span>
