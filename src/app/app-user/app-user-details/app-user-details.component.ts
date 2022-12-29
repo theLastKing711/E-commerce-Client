@@ -1,3 +1,4 @@
+import { SubSink } from 'subsink';
 import { IRoleItem, Role } from 'src/types/auth';
 import { RoleManagerService } from './../../services/role-manager.service';
 import { LoadingService } from './../../loading.service';
@@ -9,7 +10,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AlertifyService } from 'src/app/services/alertify.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { environment } from 'src/environments/environment';
-import { switchMap, Observable, forkJoin } from 'rxjs';
+import { switchMap, Observable, forkJoin, Subject } from 'rxjs';
 import { roleHintsMessages } from 'src/app/constants/constants';
 
 
@@ -21,21 +22,17 @@ import { roleHintsMessages } from 'src/app/constants/constants';
 })
 export class AppUserDetailsComponent implements OnInit {
 
+  roleHints = roleHintsMessages;
+
   id!: number;
   appUser!: AppUser
   roles!: IRoleItem[];
-
-  roleHints = roleHintsMessages;
-
-  deletAppUserrSubscription!: Subscription;
-  updatAppUserrSubscription!: Subscription;
-
+  subs: SubSink = new SubSink();
   imgUrl!: string;
-
-  categoriesSubscription!: Subscription;
-
   imagesPath: string = environment.imagesPath;
 
+  removeUser: Subject<number> = new Subject<number>();
+  removeUser$: Observable<number> = this.removeUser.asObservable();
   loading$!: Observable<boolean>;
 
   constructor(private appUserService: AppUserService,
@@ -58,7 +55,7 @@ export class AppUserDetailsComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.route.paramMap.pipe(switchMap(param => {
+    this.subs.sink = this.route.paramMap.pipe(switchMap(param => {
 
       this.loadingService.showLoading();
 
@@ -76,19 +73,31 @@ export class AppUserDetailsComponent implements OnInit {
 
       this.appUser = {...user}
 
-      console.log("appUser", this.appUser)
-
       this.roles = [...roles];
 
-      this.appUserForm.patchValue({
-        username: this.appUser.username,
-        password: "",
-        email: this.appUser.email,
-        roleName: this.appUser.roleName,
-        image: this.appUser.imagePath,
-      })
+      this.updateFormWithUserData(user);
 
       this.loadingService.hideLoading();
+    })
+
+    this.subs.sink = this.removeUser$.pipe(
+      switchMap(id => this.appUserService.removeAppUser(id))
+    )
+    .subscribe(_ => {
+      this.alertifyService.success("users deleted succefully")
+      this.router.navigate(['users'])
+    })
+
+  }
+
+  updateFormWithUserData(user: AppUser) {
+
+    this.appUserForm.patchValue({
+      username: this.appUser.username,
+      password: "",
+      email: this.appUser.email,
+      roleName: this.appUser.roleName,
+      image: this.appUser.imagePath,
     })
 
   }
@@ -122,7 +131,7 @@ export class AppUserDetailsComponent implements OnInit {
 
      const userFormData: FormData = this.getUserFormData(user);
 
-     this. updatAppUserrSubscription = this.appUserService.updateAppUser(userFormData, this.id)
+     this.subs.sink = this.appUserService.updateAppUser(userFormData, this.id)
                          .subscribe(appUser => {
                            this.alertifyService.success("appUser updated successfully");
                            this.loadingService.hideLoading();
@@ -184,28 +193,20 @@ export class AppUserDetailsComponent implements OnInit {
 
     const isEmpty: boolean = this.appUserForm.get(key)?.hasError(errorName)!;
 
-    return  isEmpty
+    return isEmpty
   }
 
-   removeAppUser(id: number) {
-    this.deletAppUserrSubscription = this.appUserService.removeAppUser(id)
-                                      .subscribe(() => {
-                                        this.alertifyService.success("users deleted succefully")
-                                        this.router.navigate(['users'])
-                                      })
+  //  removeAppUser(id: number) {
+  //   this.subs.sink = this.appUserService.removeAppUser(id)
+  //                                     .subscribe(() => {
+  //                                       this.alertifyService.success("users deleted succefully")
+  //                                       this.router.navigate(['users'])
+  //                                     })
 
-   }
+  //  }
 
   ngOnDestroy(): void {
-
-    if(this.deletAppUserrSubscription){
-      this.deletAppUserrSubscription.unsubscribe();
-    }
-
-    if(this.categoriesSubscription)
-    {
-      this.categoriesSubscription.unsubscribe();
-    }
+    this.subs.unsubscribe();
   }
 
 }

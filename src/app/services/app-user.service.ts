@@ -60,7 +60,6 @@ export class AppUserService {
 
   }
 
-
   removeAppUser(id: number) : Observable<boolean> {
     const deleteAppUserUserUrl = `${this.appUsersUrl}${id}`;
 

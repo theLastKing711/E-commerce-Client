@@ -55,9 +55,9 @@ export class AddAppUserDialogComponent implements OnInit {
 
   }
 
- formValid() {
-  return  this.userForm.valid
- }
+  formValid() {
+    return  this.userForm.valid
+  }
 
   addAppUser() {
 
@@ -124,7 +124,7 @@ export class AddAppUserDialogComponent implements OnInit {
 
  hasError(key: string, errorName: string) {
 
-   const isEmpty: boolean = this.userForm.get(key)?.hasError("required")!;
+   const isEmpty: boolean = this.userForm.get(key)?.hasError(errorName)!;
 
    return  isEmpty
  }

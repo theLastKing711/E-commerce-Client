@@ -9,8 +9,8 @@ interface baseAppUser {
 
 export interface AppUser extends baseAppUser {
 
-  createdAt: string;
-  imagePath: string;
+  createdAt?: string;
+  imagePath?: string;
 
 }
 
