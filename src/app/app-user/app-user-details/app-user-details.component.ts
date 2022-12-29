@@ -196,15 +196,6 @@ export class AppUserDetailsComponent implements OnInit {
     return isEmpty
   }
 
-  //  removeAppUser(id: number) {
-  //   this.subs.sink = this.appUserService.removeAppUser(id)
-  //                                     .subscribe(() => {
-  //                                       this.alertifyService.success("users deleted succefully")
-  //                                       this.router.navigate(['users'])
-  //                                     })
-
-  //  }
-
   ngOnDestroy(): void {
     this.subs.unsubscribe();
   }
