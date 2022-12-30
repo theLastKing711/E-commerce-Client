@@ -6,7 +6,7 @@ import { AddCategoryDialogComponent } from './../add-category-dialog/add-categor
 import { Category } from './../../../types/category';
 import { CategoryService } from './../../services/category.service';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { interval, Subscription, switchMap, Subject, Observable, tap } from 'rxjs';
+import { interval, Subscription, switchMap, Subject, Observable, tap, merge } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 import { EnhancedSelectionModel } from 'src/app/shared/utils/EnhancedSelectionModel';
@@ -25,7 +25,7 @@ export class IndexComponent implements OnInit, OnDestroy {
   pageSize: number = 10;
   totalCount!: number;
   loading: boolean = false;
-  displayedColumns: string[] = ['selection', 'id', 'name', 'createdAt', 'details', 'delete'];
+  displayedColumns: string[] = ['selection', 'id', 'name', 'createdAt', 'details'];
 
   removeCategory: Subject<number> = new Subject<number>();
   removeCategory$: Observable<number> = this.removeCategory.asObservable();
@@ -39,11 +39,31 @@ export class IndexComponent implements OnInit, OnDestroy {
     ) { }
 
   ngOnInit(): void {
-    this.getCategories(this.pageNumber, this.pageSize);
 
-    this.dialogService.subject.subscribe(newCategory => {
-      this.getCategories(this.pageNumber, this.pageSize);
-    })
+    this.loading = true;
+
+    const getcategories$ = this.categoryService.getCategories(this.pageNumber, this.pageSize)
+
+    this.subs.sink = merge(this.paginationService.pageNumber$, this.dialogService.addUser$)
+                          .pipe(
+                            tap(_ => this.loading = true),
+                            switchMap(() =>  getcategories$)
+                          )
+                          .subscribe(
+                            {
+                              next: (paginatedCategories) => {
+                                this.categoriesList = [...paginatedCategories.data]
+                                this.pageNumber = paginatedCategories.pageNumber
+                                this.pageSize = paginatedCategories.pageSize;
+                                this.totalCount = paginatedCategories.totalCount;
+
+                                this.loading = false;
+                              },
+                              error: () => {
+                                this.loading = false;
+                              },
+                            }
+                          );
 
     this.subs.sink = this.removeCategory$.pipe(
       tap(_ => this.loading = true),
@@ -55,8 +75,8 @@ export class IndexComponent implements OnInit, OnDestroy {
               {
                 return this.categoryService.getCategories(this.pageNumber - 1, this.pageSize)
               }
-
               return this.categoryService.getCategories(this.pageNumber, this.pageSize)
+
             })
     )
     .subscribe(
@@ -83,31 +103,6 @@ export class IndexComponent implements OnInit, OnDestroy {
 
   }
 
-  getCategories(pageNumber: number, pageSize: number) {
-
-    this.loading = true;
-
-    this.subs.sink = this.categoryService.getCategories(pageNumber, pageSize)
-                                          .subscribe(
-                                            {
-                                              next:   paginatedCategories => {
-
-                                                this.categoriesList = [...paginatedCategories.data]
-                                                this.pageNumber = paginatedCategories.pageNumber
-                                                this.pageSize = paginatedCategories.pageSize;
-                                                this.totalCount = paginatedCategories.totalCount;
-
-                                                this.loading = false;
-
-                                            },
-                                            error: err => {
-                                              this.loading = false;
-                                            }
-
-                                        })
-
-  }
-
   openAddDialog(enterAnimationDuration: string, exitAnimationDuration: string): void {
     this.dialog.open(AddCategoryDialogComponent, {
       width: '250px',
@@ -120,7 +115,7 @@ export class IndexComponent implements OnInit, OnDestroy {
 
     const nextPage = e.pageIndex + 1;
 
-    this.getCategories(nextPage, this.pageSize);
+    this.paginationService.setPageNumber(nextPage)
   }
 
   clearSelections(): void {

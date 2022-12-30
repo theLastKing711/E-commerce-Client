@@ -19,10 +19,10 @@
   <div *ngIf="(appUsersList$ | async) as appUsersList" class="mat-elevation-z8">
 
     <app-selection-table
-      (appUsersRemoved)="this.removeUsers.next($event);"
-      (userSelectionFilled)="fillSelections($event)"
-      (userSelectionCleared)="clearSelections()"
-      (userSelectionItemToggled)="toggleSelection($event)"
+      (itemsRemoved)="this.removeUsers.next($event)"
+      (selectionFilled)="fillSelections($event)"
+      (selectionCleared)="clearSelections()"
+      (selectionItemToggled)="toggleSelection($event)"
       [displayedColumns]="displayedColumns"
       [tableList]="appUsersList"
       [selectionList]="usersSelectionModel"

@@ -20,8 +20,7 @@ export class CategoryService {
 
   getCategories(pageNumber: number, pageSize: number): Observable<IPagination<Category>> {
 
-
-    const params = new HttpParams().set('pageNumber', pageNumber)
+    const params = new HttpParams().set('pageNumber', 1)
                                    .set('pageSize', pageSize);
 
     return this.httpClient.get<IPagination<Category>>(this.categoriesUrl, { params: params })
@@ -34,15 +33,18 @@ export class CategoryService {
     return this.httpClient.get<Category>(getCategoryUrl)
   }
 
-  addCategory(category: AddCategory): Observable<Category> {
-    return this.httpClient.post<Category>(`${environment.base_url}categories`, category);
+  addCategory(categoryFormData: any): Observable<Category> {
+
+    return this.httpClient.post<Category>(`${environment.base_url}categories`, categoryFormData);
   }
 
-  updateCategory(category: AddCategory, id: number): Observable<Category> {
+  updateCategory(updateCategoryFormData: any, id: number): Observable<Category> {
+
+    console.log("updateCategoryFormData", updateCategoryFormData)
 
     const updateCategoryUrl: string = `${this.categoriesUrl}${id}`;
 
-    return this.httpClient.put<Category>(updateCategoryUrl, category)
+    return this.httpClient.put<Category>(updateCategoryUrl, updateCategoryFormData)
   }
 
   removeCategory(id: number): Observable<boolean> {

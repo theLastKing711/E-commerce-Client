@@ -15,9 +15,7 @@ export class PaginationService {
   totalCount$: Observable<number> = this.totalCount.asObservable();
 
   setPageNumber(value: number) {
-    console.log("asdf")
     this.pageNumber.next(value);
-    console.log("asdf")
   }
 
   setPageSize(value: number) {

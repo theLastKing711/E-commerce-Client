@@ -15,10 +15,10 @@ export class SelectionTableComponent<T extends {id: number}> {
   @Input() selectionList!: EnhancedSelectionModel<T>;
   @Input() tableList!: T[];
   @Input() displayedColumns!: string[];
-  @Output() appUsersRemoved: EventEmitter<number[]> = new EventEmitter<number[]>();
-  @Output() userSelectionFilled: EventEmitter<T[]>  = new EventEmitter<T[]>();
-  @Output() userSelectionCleared: EventEmitter<void>  = new EventEmitter<void>();
-  @Output() userSelectionItemToggled: EventEmitter<T>  = new EventEmitter<T>();
+  @Output() itemsRemoved: EventEmitter<number[]> = new EventEmitter<number[]>();
+  @Output() selectionFilled: EventEmitter<T[]>  = new EventEmitter<T[]>();
+  @Output() selectionCleared: EventEmitter<void>  = new EventEmitter<void>();
+  @Output() selectionItemToggled: EventEmitter<T>  = new EventEmitter<T>();
 
   @ContentChildren(MatHeaderRowDef) headerRowDefs!: QueryList<MatHeaderRowDef>;
   @ContentChildren(MatRowDef) rowDefs!: QueryList<MatRowDef<T>>;
@@ -53,11 +53,11 @@ export class SelectionTableComponent<T extends {id: number}> {
 
     if(this.selectionList.isSelectionsFull(list))
     {
-      this.userSelectionCleared.emit();
+      this.selectionCleared.emit();
     }
     else
     {
-      this.userSelectionFilled.emit(list);
+      this.selectionFilled.emit(list);
     }
   }
 
@@ -72,7 +72,7 @@ export class SelectionTableComponent<T extends {id: number}> {
 
   toggleSelection(item: T)
   {
-    this.userSelectionItemToggled.emit(item);
+    this.selectionItemToggled.emit(item);
   }
 
   isItemChecked(item: T): boolean {
@@ -88,7 +88,7 @@ export class SelectionTableComponent<T extends {id: number}> {
   }
 
   removeAppUsers(ids: number[]) {
-    this.appUsersRemoved.emit(ids);
+    this.itemsRemoved.emit(ids);
   }
 
   trackById(index: number, item: T) {

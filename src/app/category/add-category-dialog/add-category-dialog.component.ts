@@ -28,14 +28,15 @@ export class AddCategoryDialogComponent implements OnInit {
 
   addCategory() {
 
-    const newCategory : AddCategory = {
-      id: 0,
-      name: this.categoryForm.value.name!,
-    }
+    const categoryName =  this.categoryForm.value.name!;
 
-    this.categoryService.addCategory(newCategory)
+    const categoryFormData: FormData = new FormData();
+
+    categoryFormData.append("name", categoryName);
+
+    this.categoryService.addCategory(categoryFormData)
                         .subscribe(category => {
-                          this.dialogService.subject.next(category);
+                          this.dialogService.addUser.next(category);
                           this.alertifyService.success("Category added successfully")
                           this.dialogRef.close();
                         })

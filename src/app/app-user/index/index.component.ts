@@ -161,7 +161,7 @@ export class IndexComponent implements OnInit, AfterViewInit, OnDestroy {
 
   }
 
-  deleteUserDialogClosed(enterAnimationDuration: string, exitAnimationDuration: string, data: any):Observable<any> {
+  deleteUserDialogClosed(enterAnimationDuration: string, exitAnimationDuration: string, data: any): Observable<any> {
 
     const confirmationDialogRef = this.dialog.open(ConfirmationDialogComponent, {
       enterAnimationDuration,
