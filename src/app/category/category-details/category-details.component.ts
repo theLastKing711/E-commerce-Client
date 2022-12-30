@@ -29,6 +29,7 @@ export class CategoryDetailsComponent implements OnInit {
   });
 
   ngOnInit(): void {
+
     this.route.paramMap.pipe(switchMap(param => {
 
       this.loading = true;
@@ -44,6 +45,7 @@ export class CategoryDetailsComponent implements OnInit {
 
       this.loading = false;
     })
+
   }
 
   udpateCategory() {
@@ -53,7 +55,12 @@ export class CategoryDetailsComponent implements OnInit {
       name: this.categoryForm.value.name!,
     }
 
-    this.categoryService.updateCategory(updatedCategory, this.id)
+    const updateCategoryFormData: FormData = new FormData();
+
+    updateCategoryFormData.append("id", updatedCategory.id.toString())
+    updateCategoryFormData.append("name", updatedCategory.name)
+
+    this.categoryService.updateCategory(updateCategoryFormData, this.id)
                         .subscribe(category => {
                           this.category = {...category}
                           this.alertifyService.success("Category updated successfully")
