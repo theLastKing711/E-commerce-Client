@@ -75,7 +75,7 @@ export class AppUserDetailsComponent implements OnInit {
 
       this.roles = [...roles];
 
-      this.updateFormWithUserData(user);
+      this.updateFormWithUserData();
 
       this.loadingService.hideLoading();
     })
@@ -90,7 +90,7 @@ export class AppUserDetailsComponent implements OnInit {
 
   }
 
-  updateFormWithUserData(user: AppUser) {
+  updateFormWithUserData() {
 
     this.appUserForm.patchValue({
       username: this.appUser.username,
