@@ -19,6 +19,9 @@ import {MatRippleModule} from '@angular/material/core';
 import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
 import { MatSortModule } from '@angular/material/sort';
 import { TableSearchComponent } from './table-search/table-search.component';
+import { SelectionTableComponent } from './selection-table/selection-table.component';
+
+
 
 @NgModule({
   declarations: [
@@ -26,6 +29,8 @@ import { TableSearchComponent } from './table-search/table-search.component';
     EmptyListComponent,
     ConfirmationDialogComponent,
     TableSearchComponent,
+    SelectionTableComponent
+
   ],
   imports: [
     CommonModule,
@@ -64,7 +69,8 @@ import { TableSearchComponent } from './table-search/table-search.component';
     EmptyListComponent,
     ConfirmationDialogComponent,
     MatSortModule,
-    TableSearchComponent
+    TableSearchComponent,
+    SelectionTableComponent
 
   ]
 })

@@ -55,6 +55,7 @@ export class AppUserDetailsComponent implements OnInit {
   });
 
   ngOnInit(): void {
+
     this.subs.sink = this.route.paramMap.pipe(switchMap(param => {
 
       this.loadingService.showLoading();

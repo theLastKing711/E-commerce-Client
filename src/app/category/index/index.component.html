@@ -15,13 +15,62 @@
     </button>
   </div>
 
-  <ng-container *ngIf="categoriesList && categoriesList.length > 0">
-    <app-categories-table
-      [categoriesList]="categoriesList"
-      [columnNames]="displayedColumns"
-      (categoryRemoved)="removeCategory($event)"
+  <div *ngIf="categoriesList && categoriesList.length > 0" class="mat-elevation-z8">
+
+    <app-selection-table
+      (userSelectionFilled)="fillSelections($event)"
+      (userSelectionCleared)="clearSelections()"
+      (userSelectionItemToggled)="toggleSelection($event)"
+      [displayedColumns]="displayedColumns"
+      [tableList]="categoriesList"
+      [selectionList]="usersSelectionModel"
     >
-    </app-categories-table>
+
+      <!-- Id Column -->
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef> Id </th>
+        <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+      </ng-container>
+
+      <!-- Name Column -->
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef> Name </th>
+        <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+      </ng-container>
+
+      <!-- createdAt Column -->
+      <ng-container matColumnDef="createdAt">
+        <th mat-header-cell *matHeaderCellDef> Date Created </th>
+        <td mat-cell *matCellDef="let element"> {{element.createdAt | date: 'y' || null}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="details">
+        <th mat-header-cell *matHeaderCellDef> Details </th>
+        <td mat-cell *matCellDef="let element">
+          <a [routerLink]="['/categories', element.id]" class="icon-container">
+            <mat-icon color="red">
+              remove_red_eye
+            </mat-icon>
+          </a>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="delete">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let element">
+          <span  class="icon-container">
+            <mat-icon class="delete-icon">
+              delete
+            </mat-icon>
+        </span>
+
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns" ></tr>
+      <tr  mat-row *matRowDef="let row; columns: displayedColumns;" ></tr>
+
+  </app-selection-table>
 
     <mat-paginator
       [length]="totalCount"
@@ -31,8 +80,8 @@
       (page)="changePage($event)"
       aria-label="categoies pagination"
     >
-  </mat-paginator>
-  </ng-container>
+    </mat-paginator>
+</div>
 
   <ng-container *ngIf="categoriesList && categoriesList.length == 0">
     <app-empty-list message="Categories list is empty"></app-empty-list>

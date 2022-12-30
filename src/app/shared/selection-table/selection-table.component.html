@@ -5,7 +5,7 @@
         <!-- Trash Header Column -->
         <ng-container matColumnDef="totalSelections">
           <th mat-header-cell *matHeaderCellDef colspan="1" class="delete-header">
-            <span (click)="removeAppUsers(userSelection.selected)"
+            <span (click)="removeAppUsers(selectionList.selected)"
                   class="icon-container main-delete-icon"
                   *ngIf="! isSelectionsEmpty()"
             >

@@ -19,13 +19,13 @@
   <div *ngIf="(appUsersList$ | async) as appUsersList" class="mat-elevation-z8">
 
     <app-selection-table
-      (appUsersRemoved)="removeAppUsers($event)"
+      (appUsersRemoved)="this.removeUsers.next($event);"
       (userSelectionFilled)="fillSelections($event)"
       (userSelectionCleared)="clearSelections()"
       (userSelectionItemToggled)="toggleSelection($event)"
       [displayedColumns]="displayedColumns"
       [tableList]="appUsersList"
-      [userSelection]="usersSelectionModel"
+      [selectionList]="usersSelectionModel"
     >
 
       <!-- Id Column -->

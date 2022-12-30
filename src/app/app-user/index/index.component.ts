@@ -1,4 +1,3 @@
-import { query } from '@angular/animations';
 import { TableSearchService } from './../../table-search.service';
 import { FormBuilder, FormControl } from '@angular/forms';
 import { LoadingService } from './../../loading.service';
@@ -8,8 +7,7 @@ import { AppUserDialogService } from 'src/app/services/app-user-dialog.service';
 import { AddAppUserDialogComponent } from './../add-app-user-dialog/add-app-user-dialog.component';
 import { AppUser } from 'src/types/appUser';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { AlertifyService } from './../../services/alertify.service';
-import { Subscription, switchMap, Observable, combineLatest, distinctUntilChanged, debounceTime, startWith, merge, filter, catchError, of, tap, map, interval, share, take, shareReplay, withLatestFrom } from 'rxjs';
+import {  switchMap, Observable, startWith, filter, tap,Subject, withLatestFrom } from 'rxjs';
 import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit } from '@angular/core';
 import { AppUserService } from 'src/app/services/app-user.service';
 import { EnhancedSelectionModel } from 'src/app/shared/utils/EnhancedSelectionModel';
@@ -21,7 +19,7 @@ import { SubSink } from 'subsink';
   templateUrl: './index.component.html',
   styleUrls: ['./index.component.scss']
 })
-export class IndexComponent implements AfterViewInit, OnDestroy {
+export class IndexComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
@@ -40,11 +38,12 @@ export class IndexComponent implements AfterViewInit, OnDestroy {
 
   displayedColumns: string[] = ['selection', 'id', 'username', 'email', 'createdAt',  'details'];
 
+  removeUsers: Subject<number[]> = new Subject<number[]>();
+  removeUsers$: Observable<number[]> = this.removeUsers.asObservable();
+
   constructor(
-     private alertifyService: AlertifyService,
      private dialog: MatDialog,
      private appUserService: AppUserService,
-     private appUserDialogService: AppUserDialogService,
      private paginationService: PaginationService,
      private loadingService: LoadingService,
      private fb: FormBuilder,
@@ -60,6 +59,19 @@ export class IndexComponent implements AfterViewInit, OnDestroy {
     this.loading$ = loadingService.isLoading$;
     this.searchControl = this.fb.control('');
     this.delayedInitializedSearch$ = this.searchTableService.query$
+  }
+
+  ngOnInit(): void {
+    this.subs.sink =  this.removeUsers$.pipe(
+      switchMap((ids) => this.deleteUserDialogClosed("200", "200", "do you want to delete the selected users")
+      .pipe(
+        filter(isFormSubmitted => isFormSubmitted == true),
+        switchMap(() => this.appUserService.removeAppUsers(ids)),
+        tap(() => this.paginationService.setPageNumber(1))
+      )
+      )
+    )
+    .subscribe()
   }
 
   ngAfterViewInit(): void {
@@ -146,18 +158,6 @@ export class IndexComponent implements AfterViewInit, OnDestroy {
     const nextPage = e.pageIndex + 1;
 
     this.paginationService.setPageNumber(nextPage);
-
-  }
-
-  removeAppUsers(ids: number[]): void {
-
-    this.deleteUserDialogClosed("200", "200", "do you want to delete the selected users")
-        .pipe(
-          filter(isFormSubmitted => isFormSubmitted == true),
-          switchMap(() => this.appUserService.removeAppUsers(ids)),
-          tap(() => this.paginationService.setPageNumber(1))
-        )
-        .subscribe();
 
   }
 

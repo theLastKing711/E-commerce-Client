@@ -1,3 +1,4 @@
+import { SubSink } from 'subsink';
 import { PaginationService } from './../../services/pagination.service';
 import { AlertifyService } from './../../services/alertify.service';
 import { DialogService } from './../../services/dialog.service';
@@ -5,9 +6,10 @@ import { AddCategoryDialogComponent } from './../add-category-dialog/add-categor
 import { Category } from './../../../types/category';
 import { CategoryService } from './../../services/category.service';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { interval, Subscription, switchMap } from 'rxjs';
+import { interval, Subscription, switchMap, Subject, Observable, tap } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
+import { EnhancedSelectionModel } from 'src/app/shared/utils/EnhancedSelectionModel';
 
 @Component({
   selector: 'app-index',
@@ -16,20 +18,17 @@ import { PageEvent } from '@angular/material/paginator';
 })
 export class IndexComponent implements OnInit, OnDestroy {
 
-  CategoriesSubscription!: Subscription;
-  removeCategorySubscription!: Subscription;
-
+  usersSelectionModel: EnhancedSelectionModel<Category> = new EnhancedSelectionModel<Category>(true);
+  subs: SubSink = new SubSink();
   categoriesList!: Category[]
-
   pageNumber: number = 1;
-
   pageSize: number = 10;
-
   totalCount!: number;
-
   loading: boolean = false;
+  displayedColumns: string[] = ['selection', 'id', 'name', 'createdAt', 'details', 'delete'];
 
-  displayedColumns: string[] = ['id', 'name', 'createdAt', 'details', 'delete'];
+  removeCategory: Subject<number> = new Subject<number>();
+  removeCategory$: Observable<number> = this.removeCategory.asObservable();
 
   constructor(
       private categoryService: CategoryService,
@@ -46,23 +45,66 @@ export class IndexComponent implements OnInit, OnDestroy {
       this.getCategories(this.pageNumber, this.pageSize);
     })
 
+    this.subs.sink = this.removeCategory$.pipe(
+      tap(_ => this.loading = true),
+      switchMap((id) =>  this.categoryService.removeCategory(id)),
+      switchMap(
+            () => {
+
+              if(this.paginationService.notFirstPage() && this.paginationService.pageEnded())
+              {
+                return this.categoryService.getCategories(this.pageNumber - 1, this.pageSize)
+              }
+
+              return this.categoryService.getCategories(this.pageNumber, this.pageSize)
+            })
+    )
+    .subscribe(
+    {
+      next: paginatedCategories => {
+
+        this.alertifyService.error("Category deleted successfully")
+
+        this.categoriesList = [...paginatedCategories.data]
+        this.pageNumber = paginatedCategories.pageNumber
+        this.pageSize = paginatedCategories.pageSize;
+        this.totalCount = paginatedCategories.totalCount;
+
+        this.loading = false;
+
+      },
+      error: err => {
+
+        this.loading = false;
+
+      }
+    }
+    )
+
   }
 
   getCategories(pageNumber: number, pageSize: number) {
 
     this.loading = true;
 
-    this.CategoriesSubscription = this.categoryService.getCategories(pageNumber, pageSize)
-                              .subscribe(paginatedCategories => {
+    this.subs.sink = this.categoryService.getCategories(pageNumber, pageSize)
+                                          .subscribe(
+                                            {
+                                              next:   paginatedCategories => {
 
-                                this.categoriesList = [...paginatedCategories.data]
-                                this.pageNumber = paginatedCategories.pageNumber
-                                this.pageSize = paginatedCategories.pageSize;
-                                this.totalCount = paginatedCategories.totalCount;
+                                                this.categoriesList = [...paginatedCategories.data]
+                                                this.pageNumber = paginatedCategories.pageNumber
+                                                this.pageSize = paginatedCategories.pageSize;
+                                                this.totalCount = paginatedCategories.totalCount;
 
-                                this.loading = false;
+                                                this.loading = false;
 
-                              })
+                                            },
+                                            error: err => {
+                                              this.loading = false;
+                                            }
+
+                                        })
 
   }
 
@@ -74,49 +116,39 @@ export class IndexComponent implements OnInit, OnDestroy {
     });
   }
 
-  removeCategory(id: number) {
-
-
-    this.categoryService.removeCategory(id)
-                        .pipe(switchMap(
-                                () => {
-
-                                  if(this.paginationService.notFirstPage() && this.paginationService.pageEnded())
-                                  {
-                                    return this.categoryService.getCategories(this.pageNumber - 1, this.pageSize)
-                                  }
-
-                                  return this.categoryService.getCategories(this.pageNumber, this.pageSize)
-                                })
-                        )
-                        .subscribe(paginatedCategories => {
-
-                          this.alertifyService.error("Category deleted successfully")
-
-                          this.categoriesList = [...paginatedCategories.data]
-                          this.pageNumber = paginatedCategories.pageNumber
-                          this.pageSize = paginatedCategories.pageSize;
-                          this.totalCount = paginatedCategories.totalCount;
-
-                        })
-
-  }
-
   changePage(e: PageEvent) {
-
 
     const nextPage = e.pageIndex + 1;
 
     this.getCategories(nextPage, this.pageSize);
   }
 
+  clearSelections(): void {
+    this.usersSelectionModel.clearSelections();
+    this.usersSelectionModel = this.usersSelectionModel.initSelections(this.usersSelectionModel)
+  }
+
+  fillSelections(list: Category[]) {
+
+    this.usersSelectionModel.fillSelections(list);
+    this.usersSelectionModel = this.usersSelectionModel.initSelections(this.usersSelectionModel)
+
+  }
+
+  toggleSelection(item: Category)
+  {
+    this.usersSelectionModel.toggleSelection(item);
+    this.usersSelectionModel = this.usersSelectionModel.initSelections(this.usersSelectionModel);
+  }
+
+  initSelections(list: Category[]) {
+
+    this.usersSelectionModel = this.usersSelectionModel.initSelections(this.usersSelectionModel);
+  }
+
   ngOnDestroy(): void {
-      this.CategoriesSubscription.unsubscribe();
 
-      if(this.removeCategorySubscription){
-        this.removeCategorySubscription.unsubscribe();
-      }
-
+    this.subs.unsubscribe();
   }
 
 

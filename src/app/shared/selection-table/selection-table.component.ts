@@ -1,7 +1,7 @@
-import { AfterContentChecked, AfterContentInit, Component, ContentChildren, EventEmitter, Input, OnInit, Output, QueryList, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, ContentChildren, EventEmitter, Input, OnInit, Output, QueryList, ViewChild } from '@angular/core';
 import { MatColumnDef, MatHeaderRowDef, MatNoDataRow, MatRowDef, MatTable } from '@angular/material/table';
 import { EnhancedSelectionModel } from 'src/app/shared/utils/EnhancedSelectionModel';
-import { AppUser } from 'src/types/appUser';
+
 
 @Component({
   selector: 'app-selection-table',
@@ -12,7 +12,7 @@ export class SelectionTableComponent<T extends {id: number}> {
 
   @ViewChild(MatTable) table!: MatTable<T>;
 
-  @Input() userSelection!: EnhancedSelectionModel<T>;
+  @Input() selectionList!: EnhancedSelectionModel<T>;
   @Input() tableList!: T[];
   @Input() displayedColumns!: string[];
   @Output() appUsersRemoved: EventEmitter<number[]> = new EventEmitter<number[]>();
@@ -46,12 +46,12 @@ export class SelectionTableComponent<T extends {id: number}> {
 
   isSelectionsEmpty(): boolean
   {
-    return this.userSelection.isSelectionsEmpty();
+    return this.selectionList.isSelectionsEmpty();
   }
 
   toggleSelections(list: T[])  {
 
-    if(this.userSelection.isSelectionsFull(list))
+    if(this.selectionList.isSelectionsFull(list))
     {
       this.userSelectionCleared.emit();
     }
@@ -62,12 +62,12 @@ export class SelectionTableComponent<T extends {id: number}> {
   }
 
   private isSelectionsFull(list: T[]): boolean {
-    return this.userSelection.isSelectionsFull(list);
+    return this.selectionList.isSelectionsFull(list);
   }
 
   isSelectionsToggeld(list: T[])
   {
-    return this.userSelection.isSelectionsToggeld(list);
+    return this.selectionList.isSelectionsToggeld(list);
   }
 
   toggleSelection(item: T)
@@ -76,15 +76,15 @@ export class SelectionTableComponent<T extends {id: number}> {
   }
 
   isItemChecked(item: T): boolean {
-    return this.userSelection.isSelected(item.id);
+    return this.selectionList.isSelected(item.id);
   }
 
   isToggleSelectionsIndeterminate(list: T[]): boolean {
-    return this.userSelection.isToggleSelectionsIndeterminate(list);
+    return this.selectionList.isToggleSelectionsIndeterminate(list);
   }
 
   selectionsCount(): number {
-    return this.userSelection.selectionsCount();
+    return this.selectionList.selectionsCount();
   }
 
   removeAppUsers(ids: number[]) {
