@@ -1,3 +1,4 @@
+import { AlertifyService } from 'src/app/services/alertify.service';
 import { TableSearchService } from './../../table-search.service';
 import { FormBuilder, FormControl } from '@angular/forms';
 import { LoadingService } from './../../loading.service';
@@ -17,7 +18,8 @@ import { SubSink } from 'subsink';
 @Component({
   selector: 'app-index',
   templateUrl: './index.component.html',
-  styleUrls: ['./index.component.scss']
+  styleUrls: ['./index.component.scss'],
+  providers: [PaginationService]
 })
 export class IndexComponent implements OnInit, AfterViewInit, OnDestroy {
 
@@ -42,6 +44,7 @@ export class IndexComponent implements OnInit, AfterViewInit, OnDestroy {
   removeUsers$: Observable<number[]> = this.removeUsers.asObservable();
 
   constructor(
+     private alertifyService: AlertifyService,
      private dialog: MatDialog,
      private appUserService: AppUserService,
      private paginationService: PaginationService,
@@ -62,16 +65,7 @@ export class IndexComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.subs.sink =  this.removeUsers$.pipe(
-      switchMap((ids) => this.deleteUserDialogClosed("200", "200", "do you want to delete the selected users")
-      .pipe(
-        filter(isFormSubmitted => isFormSubmitted == true),
-        switchMap(() => this.appUserService.removeAppUsers(ids)),
-        tap(() => this.paginationService.setPageNumber(1))
-      )
-      )
-    )
-    .subscribe()
+    this.iniitUserDeletedSubscrption();
   }
 
   ngAfterViewInit(): void {
@@ -138,7 +132,7 @@ export class IndexComponent implements OnInit, AfterViewInit, OnDestroy {
   handleUseradded(): void {
 
     this.subs.sink = this.addDialogService.subject$
-                          .subscribe(_ => this.paginationService.setPageNumber(1));
+                         .subscribe(_ => this.paginationService.setPageNumber(1));
 
   }
 
@@ -159,6 +153,21 @@ export class IndexComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.paginationService.setPageNumber(nextPage);
 
+  }
+
+  iniitUserDeletedSubscrption(): void {
+    this.subs.sink = this.subs.sink =  this.removeUsers$.pipe(
+      switchMap((ids) => this.deleteUserDialogClosed("200", "200", "do you want to delete the selected users")
+      .pipe(
+        filter(isFormSubmitted => isFormSubmitted == true),
+        switchMap(() => this.appUserService.removeAppUsers(ids)),
+      )
+      )
+    )
+    .subscribe(() => {
+      this.alertifyService.success("user removed successfully")
+      this.paginationService.setPageNumberAfterDelete()
+    })
   }
 
   deleteUserDialogClosed(enterAnimationDuration: string, exitAnimationDuration: string, data: any): Observable<any> {

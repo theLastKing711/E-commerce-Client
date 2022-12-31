@@ -15,7 +15,7 @@
     </button>
   </div>
 
-  <div *ngIf="(categoriesList$ | async) as categoriesList;y" class="mat-elevation-z8">
+  <div *ngIf="(categoriesList$ | async) as categoriesList;" class="mat-elevation-z8">
 
     <app-selection-table
       (itemsRemoved)="removeCategories.next($event)"

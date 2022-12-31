@@ -6,7 +6,7 @@ import { AddCategoryDialogComponent } from './../add-category-dialog/add-categor
 import { Category } from './../../../types/category';
 import { CategoryService } from './../../services/category.service';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { interval, Subscription, switchMap, Subject, Observable, tap, merge, combineLatest, withLatestFrom, startWith, pipe, filter } from 'rxjs';
+import { switchMap, Subject, Observable, withLatestFrom, filter } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 import { EnhancedSelectionModel } from 'src/app/shared/utils/EnhancedSelectionModel';
@@ -15,7 +15,8 @@ import { ConfirmationDialogComponent } from 'src/app/shared/confirmation-dialog/
 @Component({
   selector: 'app-index',
   templateUrl: './index.component.html',
-  styleUrls: ['./index.component.scss']
+  styleUrls: ['./index.component.scss'],
+  providers: [PaginationService]
 })
 export class IndexComponent implements OnInit, OnDestroy {
 
@@ -61,8 +62,6 @@ export class IndexComponent implements OnInit, OnDestroy {
 
     this.handlePageNumberChange();
 
-    // this.handlePageNumberDependentsChange();
-
   }
 
 
@@ -101,7 +100,6 @@ export class IndexComponent implements OnInit, OnDestroy {
 
     return this.pageNumber$.pipe(
                               withLatestFrom(
-                                // this.delayedInitializedSearch$.pipe(startWith("-1")),
                                  this.pageSize$,
                             ))
 
@@ -110,25 +108,25 @@ export class IndexComponent implements OnInit, OnDestroy {
   initUserAddedSubsciptions(): void {
 
     this.subs.sink = this.dialogService.addUser$
-                      .pipe(
-                        withLatestFrom(this.pageNumber$, this.pageSize$),
-                        switchMap( ([addedUser, pageNumber, pageSize]) => this.categoryService.getCategories(pageNumber, pageSize) )
-                      )
-                      .subscribe(
-                        {
-                          next: (paginatedCategories) => {
+                                      .pipe(
+                                        withLatestFrom(this.pageNumber$, this.pageSize$),
+                                        switchMap( ([addedUser, pageNumber, pageSize]) => this.categoryService.getCategories(pageNumber, pageSize) )
+                                      )
+                                      .subscribe(
+                                        {
+                                          next: (paginatedCategories) => {
+                                            this.alertifyService.success("user added successfully")
+                                            this.categoryService.setCategoreis([...paginatedCategories.data])
+                                            this.paginationService.setTotalCount(paginatedCategories.totalCount)
+                                            this.clearSelections()
 
-                            this.categoryService.setCategoreis([...paginatedCategories.data])
-                            this.paginationService.setTotalCount(paginatedCategories.totalCount)
-                            this.clearSelections()
-
-                            this.loading = false;
-                          },
-                          error: () => {
-                            this.loading = false;
-                          },
-                        }
-                      )
+                                            this.loading = false;
+                                          },
+                                          error: () => {
+                                            this.loading = false;
+                                          },
+                                        }
+                                      )
   }
 
   initCategoryReomvedSubscriptions(): void {
@@ -141,30 +139,12 @@ export class IndexComponent implements OnInit, OnDestroy {
      )
     )
     .subscribe(() => {
+      this.alertifyService.success("category removed successfully")
       this.paginationService.setPageNumberAfterDelete()
     })
 
   }
 
-  // handlePageNumberDependentsChange(): void  {
-
-  //   this.handleSearchInputChange();
-  //   this.handleUseradded();
-
-  // }
-
-  // handleSearchInputChange(): void {
-  //   this.subs.sink = this.delayedInitializedSearch$
-  //                        .pipe(tap(x => console.log("users 1", x)))
-  //                        .subscribe(_ => this.paginationService.setPageNumber(1));
-  // }
-
-  // handleUseradded(): void {
-
-  //   this.subs.sink = this.addDialogService.subject$
-  //                         .subscribe(_ => this.paginationService.setPageNumber(1));
-
-  // }
 
   openAddDialog(enterAnimationDuration: string, exitAnimationDuration: string): void {
     this.dialog.open(AddCategoryDialogComponent, {
