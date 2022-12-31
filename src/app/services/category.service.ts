@@ -1,7 +1,6 @@
 
-import { Observable, tap } from 'rxjs';
-import { BaseService } from './base.service';
-import { Category, CategoryBase, AddCategory } from './../../types/category';
+import { Observable, tap, Subject, BehaviorSubject } from 'rxjs';
+import { Category } from './../../types/category';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
@@ -15,12 +14,20 @@ export class CategoryService {
 
   private categoriesUrl: string = `${environment.base_url}categories/`;
 
+  private categories: BehaviorSubject<Category[]> = new BehaviorSubject<Category[]>([]);
+  categories$: Observable<Category[]> = this.categories.asObservable();
+
   constructor(private httpClient: HttpClient) {
+  }
+
+  setCategoreis(categories: Category[])
+  {
+    this.categories.next(categories);
   }
 
   getCategories(pageNumber: number, pageSize: number): Observable<IPagination<Category>> {
 
-    const params = new HttpParams().set('pageNumber', 1)
+    const params = new HttpParams().set('pageNumber', pageNumber)
                                    .set('pageSize', pageSize);
 
     return this.httpClient.get<IPagination<Category>>(this.categoriesUrl, { params: params })
@@ -52,6 +59,12 @@ export class CategoryService {
     const removeCategoryUrl: string = `${this.categoriesUrl}${id}`;
 
     return this.httpClient.delete<boolean>(removeCategoryUrl)
+  }
+
+  removeCategories(ids: number[]) : Observable<boolean> {
+    const deleteCategoriesUrl = `${this.categoriesUrl}removeRange`;
+
+    return this.httpClient.post<boolean>(deleteCategoriesUrl, ids);
   }
 
   getCategoryList(): Observable<Product[]>{

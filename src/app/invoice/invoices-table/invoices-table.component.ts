@@ -1,4 +1,4 @@
-import { environment } from './../../../environments/environment';
+import { environment } from '../../../environments/environment';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Invoice, InvoiceDetails } from 'src/types/invoice';
 import { state, style, transition, trigger } from '@angular/animations';

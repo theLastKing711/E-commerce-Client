@@ -6,10 +6,11 @@ import { AddCategoryDialogComponent } from './../add-category-dialog/add-categor
 import { Category } from './../../../types/category';
 import { CategoryService } from './../../services/category.service';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { interval, Subscription, switchMap, Subject, Observable, tap, merge } from 'rxjs';
+import { interval, Subscription, switchMap, Subject, Observable, tap, merge, combineLatest, withLatestFrom, startWith, pipe, filter } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 import { EnhancedSelectionModel } from 'src/app/shared/utils/EnhancedSelectionModel';
+import { ConfirmationDialogComponent } from 'src/app/shared/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
   selector: 'app-index',
@@ -20,15 +21,16 @@ export class IndexComponent implements OnInit, OnDestroy {
 
   usersSelectionModel: EnhancedSelectionModel<Category> = new EnhancedSelectionModel<Category>(true);
   subs: SubSink = new SubSink();
-  categoriesList!: Category[]
-  pageNumber: number = 1;
-  pageSize: number = 10;
-  totalCount!: number;
+  categoriesList$!: Observable<Category[]>;
+  pageNumber$: Observable<number>;
+  pageSize$: Observable<number>;
+  totalCount$!: Observable<number>;
   loading: boolean = false;
   displayedColumns: string[] = ['selection', 'id', 'name', 'createdAt', 'details'];
 
-  removeCategory: Subject<number> = new Subject<number>();
-  removeCategory$: Observable<number> = this.removeCategory.asObservable();
+  removeCategories: Subject<number[]> = new Subject<number[]>();
+  removeCategories$: Observable<number[]> = this.removeCategories.asObservable();
+
 
   constructor(
       private categoryService: CategoryService,
@@ -36,72 +38,133 @@ export class IndexComponent implements OnInit, OnDestroy {
       private dialogService :DialogService,
       private alertifyService: AlertifyService,
       private paginationService: PaginationService
-    ) { }
+    ) {
+      this.pageNumber$= this.paginationService.pageNumber$;
+      this.pageSize$ = this.paginationService.pageSize$;
+      this.totalCount$ = this.paginationService.totalCount$;
+
+      this.categoriesList$ = this.categoryService.categories$;
+
+  }
 
   ngOnInit(): void {
 
     this.loading = true;
 
-    const getcategories$ = this.categoryService.getCategories(this.pageNumber, this.pageSize)
+    this.initCategoryReomvedSubscriptions();
+    this.initPageNumberSubscriptions();
+    this.initUserAddedSubsciptions();
 
-    this.subs.sink = merge(this.paginationService.pageNumber$, this.dialogService.addUser$)
-                          .pipe(
-                            tap(_ => this.loading = true),
-                            switchMap(() =>  getcategories$)
-                          )
-                          .subscribe(
-                            {
-                              next: (paginatedCategories) => {
-                                this.categoriesList = [...paginatedCategories.data]
-                                this.pageNumber = paginatedCategories.pageNumber
-                                this.pageSize = paginatedCategories.pageSize;
-                                this.totalCount = paginatedCategories.totalCount;
+  }
 
-                                this.loading = false;
-                              },
-                              error: () => {
-                                this.loading = false;
-                              },
-                            }
-                          );
+  initPageNumberSubscriptions(): void {
 
-    this.subs.sink = this.removeCategory$.pipe(
-      tap(_ => this.loading = true),
-      switchMap((id) =>  this.categoryService.removeCategory(id)),
+    this.handlePageNumberChange();
+
+    // this.handlePageNumberDependentsChange();
+
+  }
+
+
+  handlePageNumberChange(): void {
+
+    this.subs.sink = this.tablePageNumberVariables()
+    .pipe(
       switchMap(
-            () => {
+        ([pageNumber, pageSize]) =>
+        {
+          const pageIndex = pageNumber;
 
-              if(this.paginationService.notFirstPage() && this.paginationService.pageEnded())
-              {
-                return this.categoryService.getCategories(this.pageNumber - 1, this.pageSize)
-              }
-              return this.categoryService.getCategories(this.pageNumber, this.pageSize)
-
-            })
+          return this.categoryService.getCategories(pageIndex, pageSize)
+        }
+      ),
     )
     .subscribe(
     {
-      next: paginatedCategories => {
+      next: (paginatedCategories) => {
 
-        this.alertifyService.error("Category deleted successfully")
-
-        this.categoriesList = [...paginatedCategories.data]
-        this.pageNumber = paginatedCategories.pageNumber
-        this.pageSize = paginatedCategories.pageSize;
-        this.totalCount = paginatedCategories.totalCount;
+        this.categoryService.setCategoreis([...paginatedCategories.data])
+        this.paginationService.setTotalCount(paginatedCategories.totalCount)
+        this.clearSelections()
 
         this.loading = false;
-
       },
-      error: err => {
-
+      error: () => {
         this.loading = false;
-
-      }
+      },
     }
-    )
+    );
 
   }
+
+  tablePageNumberVariables() {
+
+    return this.pageNumber$.pipe(
+                              withLatestFrom(
+                                // this.delayedInitializedSearch$.pipe(startWith("-1")),
+                                 this.pageSize$,
+                            ))
+
+  }
+
+  initUserAddedSubsciptions(): void {
+
+    this.subs.sink = this.dialogService.addUser$
+                      .pipe(
+                        withLatestFrom(this.pageNumber$, this.pageSize$),
+                        switchMap( ([addedUser, pageNumber, pageSize]) => this.categoryService.getCategories(pageNumber, pageSize) )
+                      )
+                      .subscribe(
+                        {
+                          next: (paginatedCategories) => {
+
+                            this.categoryService.setCategoreis([...paginatedCategories.data])
+                            this.paginationService.setTotalCount(paginatedCategories.totalCount)
+                            this.clearSelections()
+
+                            this.loading = false;
+                          },
+                          error: () => {
+                            this.loading = false;
+                          },
+                        }
+                      )
+  }
+
+  initCategoryReomvedSubscriptions(): void {
+    this.subs.sink = this.removeCategories$.pipe(
+      switchMap((ids) => this.deleteUserDialogClosed("200", "200", "do you want to delete the selected users")
+      .pipe(
+        filter(isFormSubmitted => isFormSubmitted == true),
+        switchMap(() => this.categoryService.removeCategories(ids)),
+      )
+     )
+    )
+    .subscribe(() => {
+      this.paginationService.setPageNumberAfterDelete()
+    })
+
+  }
+
+  // handlePageNumberDependentsChange(): void  {
+
+  //   this.handleSearchInputChange();
+  //   this.handleUseradded();
+
+  // }
+
+  // handleSearchInputChange(): void {
+  //   this.subs.sink = this.delayedInitializedSearch$
+  //                        .pipe(tap(x => console.log("users 1", x)))
+  //                        .subscribe(_ => this.paginationService.setPageNumber(1));
+  // }
+
+  // handleUseradded(): void {
+
+  //   this.subs.sink = this.addDialogService.subject$
+  //                         .subscribe(_ => this.paginationService.setPageNumber(1));
+
+  // }
 
   openAddDialog(enterAnimationDuration: string, exitAnimationDuration: string): void {
     this.dialog.open(AddCategoryDialogComponent, {
@@ -109,6 +172,18 @@ export class IndexComponent implements OnInit, OnDestroy {
       enterAnimationDuration,
       exitAnimationDuration,
     });
+  }
+
+  deleteUserDialogClosed(enterAnimationDuration: string, exitAnimationDuration: string, data: any): Observable<any> {
+
+    const confirmationDialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      enterAnimationDuration,
+      exitAnimationDuration,
+      data: data
+    })
+
+    return confirmationDialogRef.afterClosed();
+
   }
 
   changePage(e: PageEvent) {

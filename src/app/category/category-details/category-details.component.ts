@@ -39,12 +39,21 @@ export class CategoryDetailsComponent implements OnInit {
       return this.categoryService.getCategoryById(id)
 
     }))
-    .subscribe(category => {
-      this.category = {...category}
-      this.categoryForm.get('name')?.setValue(category.name)
+    .subscribe(
+    {
+        next: (category) => { {
+            this.category = {...category}
+            this.categoryForm.get('name')?.setValue(category.name)
 
-      this.loading = false;
-    })
+            this.loading = false;
+        }
+      },
+      error: err => {
+        this.loading = false;
+      }
+
+    }
+    )
 
   }
 

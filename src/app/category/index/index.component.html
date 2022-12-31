@@ -15,9 +15,10 @@
     </button>
   </div>
 
-  <div *ngIf="categoriesList && categoriesList.length > 0" class="mat-elevation-z8">
+  <div *ngIf="(categoriesList$ | async) as categoriesList;y" class="mat-elevation-z8">
 
     <app-selection-table
+      (itemsRemoved)="removeCategories.next($event)"
       (selectionFilled)="fillSelections($event)"
       (selectionCleared)="clearSelections()"
       (selectionItemToggled)="toggleSelection($event)"
@@ -61,19 +62,19 @@
   </app-selection-table>
 
   <mat-paginator
-    [length]="totalCount"
-    [pageSize]="pageSize"
+    [length]="(totalCount$ | async)"
+    [pageSize]="(pageSize$ | async)"
     [pageSizeOptions]="[10]"
-    [pageIndex]="pageNumber - 1"
+    [pageIndex]="(pageNumber$ | async)! - 1"
     (page)="changePage($event)"
     aria-label="categoies pagination"
   >
   </mat-paginator>
 </div>
 
-  <ng-container *ngIf="categoriesList && categoriesList.length == 0">
-    <app-empty-list message="Categories list is empty"></app-empty-list>
-  </ng-container>
+  <!-- <ng-container *ngIf="categoriesList && categoriesList.length == 0"> -->
+    <!-- <app-empty-list message="Categories list is empty"></app-empty-list> -->
+  <!-- </ng-container> -->
 
 </div>
 
