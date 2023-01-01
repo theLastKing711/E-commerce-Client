@@ -11,7 +11,6 @@ import { switchMap, Subject, Observable, withLatestFrom, filter, pipe } from 'rx
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 import { EnhancedSelectionModel } from 'src/app/shared/utils/EnhancedSelectionModel';
-import { ConfirmationDialogComponent } from 'src/app/shared/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
   selector: 'app-index',
@@ -55,8 +54,8 @@ export class IndexComponent implements OnInit, OnDestroy {
     this.loading = true;
 
     this.initPageNumberSubscription();
-    this.initCategoryReomvedSubscriptions();
-    this.initUserAddedSubsciptions();
+    this.initCategoryReomvedSubscription();
+    this.initUserAddedSubsciption();
 
   }
 
@@ -103,7 +102,7 @@ export class IndexComponent implements OnInit, OnDestroy {
 
   }
 
-  initUserAddedSubsciptions(): void {
+  initUserAddedSubsciption(): void {
 
     this.subs.sink = this.dialogService.addUser$
                                       .pipe(
@@ -127,11 +126,11 @@ export class IndexComponent implements OnInit, OnDestroy {
                                       )
   }
 
-  initCategoryReomvedSubscriptions(): void {
+  initCategoryReomvedSubscription(): void {
     this.subs.sink = this.removeCategories$.pipe(
       switchMap((ids) => this.deleteUserDialogClosed("200", "200", "do you want to delete the selected users")
       .pipe(
-        filter(isFormSubmitted => isFormSubmitted == true),
+        filter((isFormSubmitted: boolean) => isFormSubmitted == true),
         switchMap(() => this.categoryService.removeCategories(ids)),
       )
      )
