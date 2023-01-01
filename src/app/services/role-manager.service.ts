@@ -14,14 +14,17 @@ export class RoleManagerService {
 
   authUrl: string = `${environment.base_url}AppUsers/`;
 
-  constructor(private jwtService: JwtHelperService,private storageService: StorageService, private httpClient: HttpClient) { }
+  constructor(
+    private jwtService: JwtHelperService,
+    private storageService: StorageService,
+    private httpClient: HttpClient
+    ) { }
 
   getAllRoles(): Observable<IRoleItem[]> {
 
     const rolesRoute: string = `${this.authUrl}Roles`
 
     return this.httpClient.get<IRoleItem[]>(rolesRoute)
-
 
   }
 
@@ -47,7 +50,7 @@ export class RoleManagerService {
   }
 
 
-  getToken(): string | null {
+  private getToken(): string | null {
     const token = this.storageService.getFromStroage("access_token") as IToken;
 
     if(token != null && typeof token != "string") {

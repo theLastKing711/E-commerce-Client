@@ -37,7 +37,6 @@ export class AddCategoryDialogComponent implements OnInit {
     this.categoryService.addCategory(categoryFormData)
                         .subscribe(category => {
                           this.dialogService.addUser.next(category);
-                          this.alertifyService.success("Category added successfully")
                           this.dialogRef.close();
                         })
 
