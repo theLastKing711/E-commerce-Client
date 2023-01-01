@@ -45,8 +45,8 @@
 
               <div class="mb-4 col-md-4">
                 <mat-label>User Image: </mat-label>
-                <input type="file" (change)="uploadFile($event)" class="mt-2" [] />
-                <img [src]="imgUrl || (imagesPath + appUser.imagePath)" alt="AppUser image" class="mt-2 w-100 AppUser-image"/>
+                <input type="file" (change)="uploadFile($event)" class="mt-2"/>
+                <img [src]="imgUrl || (imagesPath + appUser?.imagePath)" alt="AppUser image" class="mt-2 w-100 AppUser-image"/>
               </div>
 
               <div class="mb-4 col-md-4">
