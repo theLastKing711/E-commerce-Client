@@ -37,7 +37,7 @@ export class IndexComponent implements OnInit, OnDestroy {
       private categoryService: CategoryService,
       public dialog: MatDialog,
       private deleteConfirmationService: DeleteConfirmationDialogService,
-      private dialogService :DialogService,
+      private dialogService: DialogService,
       private alertifyService: AlertifyService,
       private paginationService: PaginationService
     ) {
@@ -54,7 +54,7 @@ export class IndexComponent implements OnInit, OnDestroy {
     this.loading = true;
 
     this.initPageNumberSubscription();
-    this.initCategoryReomvedSubscription();
+    this.initCategoryRemovedSubscription();
     this.initUserAddedSubsciption();
 
   }
@@ -99,7 +99,7 @@ export class IndexComponent implements OnInit, OnDestroy {
               withLatestFrom(
                   this.pageSize$,
             ))
-
+            withLatestFrom
   }
 
   initUserAddedSubsciption(): void {
@@ -107,12 +107,15 @@ export class IndexComponent implements OnInit, OnDestroy {
     this.subs.sink = this.dialogService.addUser$
                                       .pipe(
                                         withLatestFrom(this.pageNumber$, this.pageSize$),
-                                        switchMap( ([addedUser, pageNumber, pageSize]) => this.categoryService.getCategories(pageNumber, pageSize) )
+                                        switchMap(
+                                          ([addedUser, pageNumber, pageSize]) => this.categoryService.getCategories(pageNumber, pageSize)
+                                        )
                                       )
                                       .subscribe(
                                         {
                                           next: (paginatedCategories) => {
-                                            this.alertifyService.success("user added successfully")
+
+                                            this.alertifyService.success("Category added successfully")
                                             this.categoryService.setCategoreis([...paginatedCategories.data])
                                             this.paginationService.setTotalCount(paginatedCategories.totalCount)
                                             this.clearSelections()
@@ -126,7 +129,7 @@ export class IndexComponent implements OnInit, OnDestroy {
                                       )
   }
 
-  initCategoryReomvedSubscription(): void {
+  initCategoryRemovedSubscription(): void {
     this.subs.sink = this.removeCategories$.pipe(
       switchMap((ids) => this.deleteUserDialogClosed("200", "200", "do you want to delete the selected users")
       .pipe(
