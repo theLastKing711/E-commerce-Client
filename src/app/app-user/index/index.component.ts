@@ -67,7 +67,7 @@ export class IndexComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.iniitUserDeletedSubscrption();
+    this.initUserDeletedSubscrption();
   }
 
   ngAfterViewInit(): void {
@@ -158,7 +158,7 @@ export class IndexComponent implements OnInit, AfterViewInit, OnDestroy {
 
   }
 
-  iniitUserDeletedSubscrption(): void {
+  initUserDeletedSubscrption(): void {
     this.subs.sink = this.subs.sink =  this.removeUsers$.pipe(
       switchMap((ids) => this.deleteUserDialogClosed("200", "200", "do you want to delete the selected users")
       .pipe(
@@ -180,7 +180,6 @@ export class IndexComponent implements OnInit, AfterViewInit, OnDestroy {
       exitAnimationDuration,
       data
     )
-
 
   }
 

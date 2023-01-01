@@ -1,3 +1,4 @@
+import { DeleteConfirmationDialogService } from './../../shared/delete-confirmation-dialog.service';
 import { SubSink } from 'subsink';
 import { PaginationService } from './../../services/pagination.service';
 import { AlertifyService } from './../../services/alertify.service';
@@ -6,7 +7,7 @@ import { AddCategoryDialogComponent } from './../add-category-dialog/add-categor
 import { Category } from './../../../types/category';
 import { CategoryService } from './../../services/category.service';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { switchMap, Subject, Observable, withLatestFrom, filter } from 'rxjs';
+import { switchMap, Subject, Observable, withLatestFrom, filter, pipe } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 import { EnhancedSelectionModel } from 'src/app/shared/utils/EnhancedSelectionModel';
@@ -36,6 +37,7 @@ export class IndexComponent implements OnInit, OnDestroy {
   constructor(
       private categoryService: CategoryService,
       public dialog: MatDialog,
+      private deleteConfirmationService: DeleteConfirmationDialogService,
       private dialogService :DialogService,
       private alertifyService: AlertifyService,
       private paginationService: PaginationService
@@ -52,27 +54,21 @@ export class IndexComponent implements OnInit, OnDestroy {
 
     this.loading = true;
 
+    this.initPageNumberSubscription();
     this.initCategoryReomvedSubscriptions();
-    this.initPageNumberSubscriptions();
     this.initUserAddedSubsciptions();
 
   }
 
-  initPageNumberSubscriptions(): void {
+  initPageNumberSubscription(): void {
 
-    this.handlePageNumberChange();
-
-  }
-
-
-  handlePageNumberChange(): void {
-
-    this.subs.sink = this.tablePageNumberVariables()
+    this.subs.sink = this.pageNumber$
     .pipe(
+      this.pageNumberDependentsLatestValues(),
       switchMap(
         ([pageNumber, pageSize]) =>
         {
-          const pageIndex = pageNumber;
+          const pageIndex = pageNumber as number;
 
           return this.categoryService.getCategories(pageIndex, pageSize)
         }
@@ -96,12 +92,14 @@ export class IndexComponent implements OnInit, OnDestroy {
 
   }
 
-  tablePageNumberVariables() {
 
-    return this.pageNumber$.pipe(
-                              withLatestFrom(
-                                 this.pageSize$,
-                            ))
+
+  pageNumberDependentsLatestValues() {
+
+    return pipe(
+              withLatestFrom(
+                  this.pageSize$,
+            ))
 
   }
 
@@ -156,13 +154,12 @@ export class IndexComponent implements OnInit, OnDestroy {
 
   deleteUserDialogClosed(enterAnimationDuration: string, exitAnimationDuration: string, data: any): Observable<any> {
 
-    const confirmationDialogRef = this.dialog.open(ConfirmationDialogComponent, {
-      enterAnimationDuration,
-      exitAnimationDuration,
-      data: data
-    })
-
-    return confirmationDialogRef.afterClosed();
+    return this.deleteConfirmationService
+               .openDeleteConfirmationDialog(
+                  enterAnimationDuration,
+                  exitAnimationDuration,
+                  data
+               )
 
   }
 
