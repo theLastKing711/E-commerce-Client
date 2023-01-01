@@ -7,7 +7,7 @@ import { AddCategoryDialogComponent } from './../add-category-dialog/add-categor
 import { Category } from './../../../types/category';
 import { CategoryService } from './../../services/category.service';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { switchMap, Subject, Observable, withLatestFrom, filter, pipe } from 'rxjs';
+import { switchMap, Subject, Observable, withLatestFrom, filter, pipe, tap, UnaryFunction } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 import { EnhancedSelectionModel } from 'src/app/shared/utils/EnhancedSelectionModel';
@@ -55,7 +55,7 @@ export class IndexComponent implements OnInit, OnDestroy {
 
     this.initPageNumberSubscription();
     this.initCategoryRemovedSubscription();
-    this.initUserAddedSubsciption();
+    this.initCategoryAddedSubsciption();
 
   }
 
@@ -67,7 +67,7 @@ export class IndexComponent implements OnInit, OnDestroy {
       switchMap(
         ([pageNumber, pageSize]) =>
         {
-          const pageIndex = pageNumber as number;
+          const pageIndex = pageNumber;
 
           return this.categoryService.getCategories(pageIndex, pageSize)
         }
@@ -93,7 +93,7 @@ export class IndexComponent implements OnInit, OnDestroy {
 
 
 
-  pageNumberDependentsLatestValues() {
+  pageNumberDependentsLatestValues(): UnaryFunction<Observable<number>, Observable<[number, number]>> {
 
     return pipe(
               withLatestFrom(
@@ -102,19 +102,18 @@ export class IndexComponent implements OnInit, OnDestroy {
             withLatestFrom
   }
 
-  initUserAddedSubsciption(): void {
+  initCategoryAddedSubsciption(): void {
 
     this.subs.sink = this.dialogService.addUser$
                                       .pipe(
                                         withLatestFrom(this.pageNumber$, this.pageSize$),
                                         switchMap(
-                                          ([addedUser, pageNumber, pageSize]) => this.categoryService.getCategories(pageNumber, pageSize)
+                                          ([categoryAdded, pageNumber, pageSize]) => this.categoryService.getCategories(pageNumber, pageSize)
                                         )
                                       )
                                       .subscribe(
                                         {
                                           next: (paginatedCategories) => {
-
                                             this.alertifyService.success("Category added successfully")
                                             this.categoryService.setCategoreis([...paginatedCategories.data])
                                             this.paginationService.setTotalCount(paginatedCategories.totalCount)
@@ -124,7 +123,7 @@ export class IndexComponent implements OnInit, OnDestroy {
                                           },
                                           error: () => {
                                             this.loading = false;
-                                          },
+                                          }
                                         }
                                       )
   }
