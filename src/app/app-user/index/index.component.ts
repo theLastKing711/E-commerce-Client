@@ -9,7 +9,7 @@ import { AppUserDialogService } from 'src/app/services/app-user-dialog.service';
 import { AddAppUserDialogComponent } from './../add-app-user-dialog/add-app-user-dialog.component';
 import { AppUser } from 'src/types/appUser';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import {  switchMap, Observable, startWith, filter, tap,Subject, withLatestFrom, pipe } from 'rxjs';
+import {  switchMap, Observable, startWith, filter, tap,Subject, withLatestFrom, pipe, UnaryFunction } from 'rxjs';
 import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit } from '@angular/core';
 import { AppUserService } from 'src/app/services/app-user.service';
 import { EnhancedSelectionModel } from 'src/app/shared/utils/EnhancedSelectionModel';
@@ -93,7 +93,7 @@ export class IndexComponent implements OnInit, AfterViewInit, OnDestroy {
       switchMap(
         ([pageNumber, query, pageSize, addedUser]) =>
         {
-          const pageIndex = pageNumber as number;
+          const pageIndex = pageNumber;
 
           console.log("users 2", pageNumber)
           return this.appUserService.getAppUsers(pageIndex, pageSize, query)
@@ -108,7 +108,7 @@ export class IndexComponent implements OnInit, AfterViewInit, OnDestroy {
 
   }
 
-  pageNumberDependentsLatestValues() {
+  pageNumberDependentsLatestValues(): UnaryFunction<Observable<number>, Observable<[number, string, number, AppUser]>> {
 
     return pipe(
       withLatestFrom(

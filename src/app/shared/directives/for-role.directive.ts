@@ -1,6 +1,5 @@
 import { RoleManagerService } from './../../services/role-manager.service';
 import { Role } from './../../../types/auth';
-import { AuthService } from 'src/app/services/auth.service';
 import { Directive, TemplateRef, ViewContainerRef, OnInit, Input } from '@angular/core';
 
 @Directive({

@@ -18,14 +18,14 @@ export class EnhancedSelectionModel<T extends {id : number}> extends SelectionMo
 
     clearSelections() {
         this.clear();
-        this.initSelections(this);
+        // this.initSelections(this);
     }
 
     fillSelections(list: T[]) {
 
         const usersId = list.map(x => x.id);
         this.select(...usersId)
-        this.initSelections(this);
+        // this.initSelections(this);
 
     }
 

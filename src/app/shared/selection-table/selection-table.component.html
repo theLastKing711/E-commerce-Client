@@ -2,6 +2,12 @@
     <div class="table-container">
       <table mat-table [dataSource]="tableList" tabindex="0" [trackBy]="trackById">
 
+        <!-- Spacer Header Column -->
+        <ng-container matColumnDef="actions-spacer">
+          <th mat-header-cell *matHeaderCellDef [attr.colspan]="getSelectioHeaderSpacerWidth" >
+          </th>
+        </ng-container>
+
         <!-- Trash Header Column -->
         <ng-container matColumnDef="totalSelections">
           <th mat-header-cell *matHeaderCellDef colspan="1" class="delete-header">
@@ -13,12 +19,6 @@
                 delete
               </mat-icon>
             </span>
-          </th>
-        </ng-container>
-
-        <!-- Selected Count Header Column -->
-        <ng-container matColumnDef="actions-spacer">
-          <th mat-header-cell *matHeaderCellDef [attr.colspan]="getSelectioHeaderSpacerWidth" >
           </th>
         </ng-container>
 

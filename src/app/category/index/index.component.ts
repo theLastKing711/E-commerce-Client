@@ -21,13 +21,14 @@ import { EnhancedSelectionModel } from 'src/app/shared/utils/EnhancedSelectionMo
 export class IndexComponent implements OnInit, OnDestroy {
 
   usersSelectionModel: EnhancedSelectionModel<Category> = new EnhancedSelectionModel<Category>(true);
+
   subs: SubSink = new SubSink();
   categoriesList$!: Observable<Category[]>;
   pageNumber$: Observable<number>;
   pageSize$: Observable<number>;
   totalCount$!: Observable<number>;
   loading: boolean = false;
-  displayedColumns: string[] = ['selection', 'id', 'name', 'createdAt', 'details'];
+  displayedColumns: string[] = ['id', 'name', 'createdAt', 'details'];
 
   removeCategories: Subject<number[]> = new Subject<number[]>();
   removeCategories$: Observable<number[]> = this.removeCategories.asObservable();
@@ -99,7 +100,7 @@ export class IndexComponent implements OnInit, OnDestroy {
               withLatestFrom(
                   this.pageSize$,
             ))
-            withLatestFrom
+
   }
 
   initCategoryAddedSubsciption(): void {
@@ -129,6 +130,7 @@ export class IndexComponent implements OnInit, OnDestroy {
   }
 
   initCategoryRemovedSubscription(): void {
+
     this.subs.sink = this.removeCategories$.pipe(
       switchMap((ids) => this.deleteUserDialogClosed("200", "200", "do you want to delete the selected users")
       .pipe(
@@ -173,13 +175,13 @@ export class IndexComponent implements OnInit, OnDestroy {
 
   clearSelections(): void {
     this.usersSelectionModel.clearSelections();
-    this.usersSelectionModel = this.usersSelectionModel.initSelections(this.usersSelectionModel)
+    // this.usersSelectionModel = this.usersSelectionModel.initSelections(this.usersSelectionModel)
   }
 
   fillSelections(list: Category[]) {
 
     this.usersSelectionModel.fillSelections(list);
-    this.usersSelectionModel = this.usersSelectionModel.initSelections(this.usersSelectionModel)
+    // this.usersSelectionModel = this.usersSelectionModel.initSelections(this.usersSelectionModel)
 
   }
 

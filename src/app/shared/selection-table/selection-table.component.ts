@@ -27,7 +27,7 @@ export class SelectionTableComponent<T extends {id: number}> {
 
   ngAfterViewInit(): void {
 
-    console.log("type of this", typeof this)
+    console.log("type of this", typeof this.tableList)
 
     this.columnDefs.forEach(columnDef => this.table.addColumnDef(columnDef));
     this.rowDefs.forEach(rowDef => this.table.addRowDef(rowDef));
@@ -62,7 +62,9 @@ export class SelectionTableComponent<T extends {id: number}> {
   }
 
   private isSelectionsFull(list: T[]): boolean {
+
     return this.selectionList.isSelectionsFull(list);
+
   }
 
   isSelectionsToggeld(list: T[])
