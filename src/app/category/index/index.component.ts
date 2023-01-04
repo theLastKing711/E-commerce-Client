@@ -1,3 +1,4 @@
+import { TableSearchService } from 'src/app/table-search.service';
 import { DeleteConfirmationDialogService } from './../../shared/delete-confirmation-dialog.service';
 import { SubSink } from 'subsink';
 import { PaginationService } from './../../services/pagination.service';
@@ -7,7 +8,7 @@ import { AddCategoryDialogComponent } from './../add-category-dialog/add-categor
 import { Category } from './../../../types/category';
 import { CategoryService } from './../../services/category.service';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { switchMap, Subject, Observable, withLatestFrom, filter, pipe, tap, UnaryFunction } from 'rxjs';
+import { switchMap, Subject, Observable, withLatestFrom, filter, pipe, tap, UnaryFunction, startWith } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 import { EnhancedSelectionModel } from 'src/app/shared/utils/EnhancedSelectionModel';
@@ -16,19 +17,22 @@ import { EnhancedSelectionModel } from 'src/app/shared/utils/EnhancedSelectionMo
   selector: 'app-index',
   templateUrl: './index.component.html',
   styleUrls: ['./index.component.scss'],
-  providers: [PaginationService]
+  providers: [PaginationService, TableSearchService]
 })
 export class IndexComponent implements OnInit, OnDestroy {
 
   usersSelectionModel: EnhancedSelectionModel<Category> = new EnhancedSelectionModel<Category>(true);
 
   subs: SubSink = new SubSink();
+
   categoriesList$!: Observable<Category[]>;
   pageNumber$: Observable<number>;
   pageSize$: Observable<number>;
   totalCount$!: Observable<number>;
+  delayedInitializedSearch$!: Observable<string>;
+
   loading: boolean = false;
-  displayedColumns: string[] = ['id', 'name', 'createdAt', 'details'];
+  displayedColumns: string[] = ['selection', 'id', 'name', 'createdAt', 'details'];
 
   removeCategories: Subject<number[]> = new Subject<number[]>();
   removeCategories$: Observable<number[]> = this.removeCategories.asObservable();
@@ -40,21 +44,22 @@ export class IndexComponent implements OnInit, OnDestroy {
       private deleteConfirmationService: DeleteConfirmationDialogService,
       private dialogService: DialogService,
       private alertifyService: AlertifyService,
-      private paginationService: PaginationService
+      private paginationService: PaginationService,
+      private searchTableService: TableSearchService,
     ) {
       this.pageNumber$= this.paginationService.pageNumber$;
       this.pageSize$ = this.paginationService.pageSize$;
       this.totalCount$ = this.paginationService.totalCount$;
 
       this.categoriesList$ = this.categoryService.categories$;
+      this.delayedInitializedSearch$ = this.searchTableService.query$;
 
   }
 
   ngOnInit(): void {
 
-    this.loading = true;
-
     this.initPageNumberSubscription();
+    this.InitPageNumberDependentsSubsriptions();
     this.initCategoryRemovedSubscription();
     this.initCategoryAddedSubsciption();
 
@@ -62,15 +67,18 @@ export class IndexComponent implements OnInit, OnDestroy {
 
   initPageNumberSubscription(): void {
 
+    this.loading = true;
+
     this.subs.sink = this.pageNumber$
     .pipe(
       this.pageNumberDependentsLatestValues(),
       switchMap(
-        ([pageNumber, pageSize]) =>
+        ([pageNumber, query, pageSize]) =>
         {
+          this.loading = true;
           const pageIndex = pageNumber;
 
-          return this.categoryService.getCategories(pageIndex, pageSize)
+          return this.categoryService.getCategories(pageIndex, pageSize, query)
         }
       ),
     )
@@ -94,22 +102,37 @@ export class IndexComponent implements OnInit, OnDestroy {
 
 
 
-  pageNumberDependentsLatestValues(): UnaryFunction<Observable<number>, Observable<[number, number]>> {
+  pageNumberDependentsLatestValues(): UnaryFunction<Observable<number>, Observable<[number,string, number]>> {
 
     return pipe(
               withLatestFrom(
+                this.delayedInitializedSearch$.pipe(startWith("-1")),
                   this.pageSize$,
             ))
 
   }
 
+
+  InitPageNumberDependentsSubsriptions(): void  {
+
+    this.InitSearchInputChangeSubscription();
+
+  }
+
+  InitSearchInputChangeSubscription(): void {
+    this.subs.sink = this.delayedInitializedSearch$
+                         .pipe(tap(x => console.log("users 1", x)))
+                         .subscribe(_ => this.paginationService.setPageNumber(1));
+  }
+
+
   initCategoryAddedSubsciption(): void {
 
     this.subs.sink = this.dialogService.addUser$
                                       .pipe(
-                                        withLatestFrom(this.pageNumber$, this.pageSize$),
+                                        withLatestFrom(this.pageNumber$, this.pageSize$, this.delayedInitializedSearch$),
                                         switchMap(
-                                          ([categoryAdded, pageNumber, pageSize]) => this.categoryService.getCategories(pageNumber, pageSize)
+                                          ([categoryAdded, pageNumber, pageSize, query]) => this.categoryService.getCategories(pageNumber, pageSize, query)
                                         )
                                       )
                                       .subscribe(

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { FormControl, FormBuilder } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, map, Observable, startWith, Subscription, tap } from 'rxjs';
 import { TableSearchService } from 'src/app/table-search.service';
@@ -9,6 +9,8 @@ import { TableSearchService } from 'src/app/table-search.service';
   styleUrls: ['./table-search.component.scss']
 })
 export class TableSearchComponent implements OnInit, OnDestroy {
+
+  @Input() title!: string;
 
   public searchControl!: FormControl;
 

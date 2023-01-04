@@ -20,7 +20,7 @@ import { SubSink } from 'subsink';
   selector: 'app-index',
   templateUrl: './index.component.html',
   styleUrls: ['./index.component.scss'],
-  providers: [PaginationService]
+  providers: [PaginationService, TableSearchService]
 })
 export class IndexComponent implements OnInit, AfterViewInit, OnDestroy {
 
@@ -71,9 +71,7 @@ export class IndexComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-
     this.initPageNumberRelatedSubscriptions();
-
   }
 
   initPageNumberRelatedSubscriptions(): void {
@@ -93,12 +91,15 @@ export class IndexComponent implements OnInit, AfterViewInit, OnDestroy {
       switchMap(
         ([pageNumber, query, pageSize, addedUser]) =>
         {
+          this.loadingService.showLoading();
+
           const pageIndex = pageNumber;
 
           console.log("users 2", pageNumber)
           return this.appUserService.getAppUsers(pageIndex, pageSize, query)
         }
       ),
+      tap(_ => this.loadingService.hideLoading()),
       tap(x => console.log("users 3", x)),
       tap(data => this.appUserService.setUsers([...data.data])),
       tap(data => this.paginationService.setTotalCount(data.totalCount)),

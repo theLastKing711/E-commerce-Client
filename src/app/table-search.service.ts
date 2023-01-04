@@ -1,9 +1,7 @@
 import { BehaviorSubject, Subject, Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class TableSearchService {
 
   private query: Subject<string> = new Subject<string>();

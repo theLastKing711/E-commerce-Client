@@ -1,9 +1,13 @@
 
+
+<app-table-search  title="Search Categories"></app-table-search>
+
 <div class="loading" *ngIf="loading">
   <app-loading></app-loading>
 </div>
 
 <div class="mt-4" *ngIf="! loading">
+
 
   <div >
     <button
@@ -64,7 +68,7 @@
   <mat-paginator
     [length]="(totalCount$ | async)"
     [pageSize]="(pageSize$ | async)"
-    [pageSizeOptions]="[10]"
+    [pageSizeOptions]="[(pageSize$ | async)!]"
     [pageIndex]="(pageNumber$ | async)! - 1"
     (page)="changePage($event)"
     aria-label="catgories pagination"

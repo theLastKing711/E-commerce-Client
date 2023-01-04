@@ -25,10 +25,11 @@ export class CategoryService {
     this.categories.next(categories);
   }
 
-  getCategories(pageNumber: number, pageSize: number): Observable<IPagination<Category>> {
+  getCategories(pageNumber: number, pageSize: number, query: string): Observable<IPagination<Category>> {
 
     const params = new HttpParams().set('pageNumber', pageNumber)
-                                   .set('pageSize', pageSize);
+                                   .set('pageSize', pageSize)
+                                   .set('query', query);
 
     return this.httpClient.get<IPagination<Category>>(this.categoriesUrl, { params: params })
   }

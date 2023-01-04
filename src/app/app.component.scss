@@ -39,3 +39,35 @@
   }
 
 }
+
+.scroll-container {
+  display: flex;
+  gap: 2rem;
+
+  /*
+* These two properties force the element to be a
+scrolling
+* container. The value of overflow should be auto or
+scroll
+*/
+width: 100vw;
+overflow-x: auto;
+scroll-snap-type: x mandatory;
+
+}
+/*
+* Makes the element a Scroll Snap container
+*/
+.scroll-container p {
+/*
+* Makes every flex item exactly 40vw. The total width of
+* the children overflows the width of the container
+*/
+flex: 0 0 40vw;
+
+scroll-snap-align: none center;
+
+}
+/*
+* Where to snap after scrolling
+*/
