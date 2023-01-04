@@ -68,9 +68,9 @@ import { SelectionTableComponent } from './selection-table/selection-table.compo
     MatRippleModule,
     EmptyListComponent,
     ConfirmationDialogComponent,
-    MatSortModule,
     TableSearchComponent,
-    SelectionTableComponent
+    SelectionTableComponent,
+    MatSortModule,
 
   ]
 })

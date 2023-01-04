@@ -12,6 +12,7 @@ import { switchMap, Subject, Observable, withLatestFrom, filter, pipe, tap, Unar
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 import { EnhancedSelectionModel } from 'src/app/shared/utils/EnhancedSelectionModel';
+import { Sort } from '@angular/material/sort';
 
 @Component({
   selector: 'app-index',
@@ -37,6 +38,8 @@ export class IndexComponent implements OnInit, OnDestroy {
   removeCategories: Subject<number[]> = new Subject<number[]>();
   removeCategories$: Observable<number[]> = this.removeCategories.asObservable();
 
+  sortHeader: Subject<Sort> = new Subject<Sort>();
+  sortHeader$: Observable<Sort> = this.sortHeader.asObservable();
 
   constructor(
       private categoryService: CategoryService,
@@ -102,12 +105,13 @@ export class IndexComponent implements OnInit, OnDestroy {
 
 
 
-  pageNumberDependentsLatestValues(): UnaryFunction<Observable<number>, Observable<[number,string, number]>> {
+  pageNumberDependentsLatestValues(): UnaryFunction<Observable<number>, Observable<[number,string, number, Sort]>> {
 
     return pipe(
               withLatestFrom(
                 this.delayedInitializedSearch$.pipe(startWith("-1")),
                   this.pageSize$,
+                  this.sortHeader$.pipe(startWith({active: '', direction: ''} as Sort))
             ))
 
   }
@@ -120,16 +124,24 @@ export class IndexComponent implements OnInit, OnDestroy {
   }
 
   InitSearchInputChangeSubscription(): void {
+
     this.subs.sink = this.delayedInitializedSearch$
                          .pipe(tap(x => console.log("users 1", x)))
                          .subscribe(_ => this.paginationService.setPageNumber(1));
+
+  }
+
+  InitSearchHeaderChangedSubscription(): void {
+
+    this.subs.sink = this.sortHeader$.subscribe(_ => this.paginationService.setPageNumber(1))
+
   }
 
 
   initCategoryAddedSubsciption(): void {
 
     this.subs.sink = this.dialogService.addUser$
-                                      .pipe(
+                                       .pipe(
                                         withLatestFrom(this.pageNumber$, this.pageSize$, this.delayedInitializedSearch$),
                                         switchMap(
                                           ([categoryAdded, pageNumber, pageSize, query]) => this.categoryService.getCategories(pageNumber, pageSize, query)
@@ -169,6 +181,10 @@ export class IndexComponent implements OnInit, OnDestroy {
 
   }
 
+
+  sortChanged(sort: Sort) {
+    this.sortHeader.next(sort);
+  }
 
   openAddDialog(enterAnimationDuration: string, exitAnimationDuration: string): void {
     this.dialog.open(AddCategoryDialogComponent, {
