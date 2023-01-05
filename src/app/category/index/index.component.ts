@@ -8,7 +8,7 @@ import { AddCategoryDialogComponent } from './../add-category-dialog/add-categor
 import { Category } from './../../../types/category';
 import { CategoryService } from './../../services/category.service';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { switchMap, Subject, Observable, withLatestFrom, filter, pipe, tap, UnaryFunction, startWith } from 'rxjs';
+import { switchMap, Subject, Observable, filter, pipe, tap, UnaryFunction, startWith, BehaviorSubject, withLatestFrom, skip } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 import { EnhancedSelectionModel } from 'src/app/shared/utils/EnhancedSelectionModel';
@@ -38,8 +38,7 @@ export class IndexComponent implements OnInit, OnDestroy {
   removeCategories: Subject<number[]> = new Subject<number[]>();
   removeCategories$: Observable<number[]> = this.removeCategories.asObservable();
 
-  sortHeader: Subject<Sort> = new Subject<Sort>();
-  sortHeader$: Observable<Sort> = this.sortHeader.asObservable();
+  sortHeader$!: Observable<Sort>;
 
   constructor(
       private categoryService: CategoryService,
@@ -55,6 +54,8 @@ export class IndexComponent implements OnInit, OnDestroy {
       this.totalCount$ = this.paginationService.totalCount$;
 
       this.categoriesList$ = this.categoryService.categories$;
+      this.sortHeader$ = this.categoryService.sortHeader$;
+
       this.delayedInitializedSearch$ = this.searchTableService.query$;
 
   }
@@ -70,36 +71,35 @@ export class IndexComponent implements OnInit, OnDestroy {
 
   initPageNumberSubscription(): void {
 
-    this.loading = true;
-
     this.subs.sink = this.pageNumber$
-    .pipe(
-      this.pageNumberDependentsLatestValues(),
-      switchMap(
-        ([pageNumber, query, pageSize]) =>
-        {
-          this.loading = true;
-          const pageIndex = pageNumber;
+                          .pipe(
+                            this.pageNumberDependentsLatestValues(),
+                            switchMap(
+                              ([pageNumber, query, pageSize, sort]) =>
+                              {
+                                // alert("asldkss")
+                                this.loading = true;
+                                const pageIndex = pageNumber;
 
-          return this.categoryService.getCategories(pageIndex, pageSize, query)
-        }
-      ),
-    )
-    .subscribe(
-    {
-      next: (paginatedCategories) => {
+                                return this.categoryService.getCategories(pageIndex, pageSize, query, sort)
+                              }
+                            ),
+                          )
+                          .subscribe(
+                          {
+                            next: (paginatedCategories) => {
+                              // alert("testing")
+                              this.categoryService.setCategoreis([...paginatedCategories.data])
+                              this.paginationService.setTotalCount(paginatedCategories.totalCount)
+                              this.clearSelections()
 
-        this.categoryService.setCategoreis([...paginatedCategories.data])
-        this.paginationService.setTotalCount(paginatedCategories.totalCount)
-        this.clearSelections()
-
-        this.loading = false;
-      },
-      error: () => {
-        this.loading = false;
-      },
-    }
-    );
+                              this.loading = false;
+                            },
+                            error: () => {
+                              this.loading = false;
+                            },
+                          }
+                          );
 
   }
 
@@ -110,8 +110,8 @@ export class IndexComponent implements OnInit, OnDestroy {
     return pipe(
               withLatestFrom(
                 this.delayedInitializedSearch$.pipe(startWith("-1")),
-                  this.pageSize$,
-                  this.sortHeader$.pipe(startWith({active: '', direction: ''} as Sort))
+                this.pageSize$,
+                this.sortHeader$
             ))
 
   }
@@ -120,6 +120,7 @@ export class IndexComponent implements OnInit, OnDestroy {
   InitPageNumberDependentsSubsriptions(): void  {
 
     this.InitSearchInputChangeSubscription();
+    this.InitSortHeaderChangedSubscription();
 
   }
 
@@ -131,20 +132,21 @@ export class IndexComponent implements OnInit, OnDestroy {
 
   }
 
-  InitSearchHeaderChangedSubscription(): void {
+  InitSortHeaderChangedSubscription(): void {
 
-    this.subs.sink = this.sortHeader$.subscribe(_ => this.paginationService.setPageNumber(1))
+    this.subs.sink = this.sortHeader$
+                         .pipe(skip(1))
+                         .subscribe(_ => this.paginationService.setPageNumber(1))
 
   }
 
 
   initCategoryAddedSubsciption(): void {
-
     this.subs.sink = this.dialogService.addUser$
                                        .pipe(
-                                        withLatestFrom(this.pageNumber$, this.pageSize$, this.delayedInitializedSearch$),
+                                        withLatestFrom(this.pageNumber$, this.pageSize$, this.delayedInitializedSearch$, this.sortHeader$),
                                         switchMap(
-                                          ([categoryAdded, pageNumber, pageSize, query]) => this.categoryService.getCategories(pageNumber, pageSize, query)
+                                          ([categoryAdded, pageNumber, pageSize, query, sort]) => this.categoryService.getCategories(pageNumber, pageSize, query, sort)
                                         )
                                       )
                                       .subscribe(
@@ -183,7 +185,7 @@ export class IndexComponent implements OnInit, OnDestroy {
 
 
   sortChanged(sort: Sort) {
-    this.sortHeader.next(sort);
+    this.categoryService.setSortHeader(sort);
   }
 
   openAddDialog(enterAnimationDuration: string, exitAnimationDuration: string): void {

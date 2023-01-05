@@ -31,6 +31,9 @@
       [selectionList]="usersSelectionModel"
       matSort
       (matSortChange)="sortChanged($event)"
+      [matSortActive]="(sortHeader$ | async)?.active!"
+      [matSortDirection]="(sortHeader$ | async)?.direction!"
+
     >
 
       <!-- Id Column -->
@@ -52,7 +55,7 @@
       </ng-container>
 
       <ng-container matColumnDef="details">
-        <th mat-header-cell *matHeaderCellDef matsort mat-sort-header > Details </th>
+        <th mat-header-cell *matHeaderCellDef > Details </th>
         <td mat-cell *matCellDef="let element">
           <a [routerLink]="['/categories', element.id]" class="icon-container">
             <mat-icon color="red">

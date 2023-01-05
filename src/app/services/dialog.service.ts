@@ -11,6 +11,4 @@ export class DialogService {
   addUser: Subject<AddCategory> = new Subject<AddCategory>();
   addUser$: Observable<AddCategory> = this.addUser.asObservable();
 
-  constructor() { }
-
 }

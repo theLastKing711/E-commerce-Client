@@ -1,3 +1,4 @@
+import { Sort } from '@angular/material/sort';
 
 import { Observable, tap, Subject, BehaviorSubject } from 'rxjs';
 import { Category } from './../../types/category';
@@ -17,6 +18,9 @@ export class CategoryService {
   private categories: BehaviorSubject<Category[]> = new BehaviorSubject<Category[]>([]);
   categories$: Observable<Category[]> = this.categories.asObservable();
 
+  private sortHeader: Subject<Sort> = new BehaviorSubject<Sort>({active: '-1', direction: ''} as Sort);
+  sortHeader$: Observable<Sort> = this.sortHeader.asObservable();
+
   constructor(private httpClient: HttpClient) {
   }
 
@@ -25,13 +29,27 @@ export class CategoryService {
     this.categories.next(categories);
   }
 
-  getCategories(pageNumber: number, pageSize: number, query: string): Observable<IPagination<Category>> {
+  setSortHeader(sort: Sort)
+  {
+    this.sortHeader.next(sort);
+  }
+
+  getCategories(pageNumber: number, pageSize: number, query: string, sort: Sort): Observable<IPagination<Category>> {
+
+
+    const mappedDirection = this.mapDirectionToValueIfEmpty(sort);
 
     const params = new HttpParams().set('pageNumber', pageNumber)
                                    .set('pageSize', pageSize)
-                                   .set('query', query);
+                                   .set('query', query)
+                                   .set('active', sort.active)
+                                   .set('direction', mappedDirection);
 
     return this.httpClient.get<IPagination<Category>>(this.categoriesUrl, { params: params })
+  }
+
+  private mapDirectionToValueIfEmpty(sort: Sort): string {
+    return sort.direction == ""  ?  "-1" : sort.direction
   }
 
   getCategoryById(id: number): Observable<Category> {
