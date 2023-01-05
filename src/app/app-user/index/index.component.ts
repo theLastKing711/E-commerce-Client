@@ -1,3 +1,4 @@
+import { SortHeaderService } from './../../shared/sort-header.service';
 import { DeleteConfirmationDialogService } from './../../shared/delete-confirmation-dialog.service';
 import { AlertifyService } from 'src/app/services/alertify.service';
 import { TableSearchService } from './../../table-search.service';
@@ -9,18 +10,19 @@ import { AppUserDialogService } from 'src/app/services/app-user-dialog.service';
 import { AddAppUserDialogComponent } from './../add-app-user-dialog/add-app-user-dialog.component';
 import { AppUser } from 'src/types/appUser';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import {  switchMap, Observable, startWith, filter, tap,Subject, withLatestFrom, pipe, UnaryFunction } from 'rxjs';
+import {  switchMap, Observable, startWith, filter, tap,Subject, withLatestFrom, pipe, UnaryFunction, skip } from 'rxjs';
 import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit } from '@angular/core';
 import { AppUserService } from 'src/app/services/app-user.service';
 import { EnhancedSelectionModel } from 'src/app/shared/utils/EnhancedSelectionModel';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { SubSink } from 'subsink';
+import { Sort } from '@angular/material/sort';
 
 @Component({
   selector: 'app-index',
   templateUrl: './index.component.html',
   styleUrls: ['./index.component.scss'],
-  providers: [PaginationService, TableSearchService]
+  providers: [PaginationService,SortHeaderService , TableSearchService]
 })
 export class IndexComponent implements OnInit, AfterViewInit, OnDestroy {
 
@@ -44,6 +46,8 @@ export class IndexComponent implements OnInit, AfterViewInit, OnDestroy {
   removeUsers: Subject<number[]> = new Subject<number[]>();
   removeUsers$: Observable<number[]> = this.removeUsers.asObservable();
 
+  sortHeader$!: Observable<Sort>;
+
   constructor(
      private alertifyService: AlertifyService,
      private dialog: MatDialog,
@@ -53,7 +57,8 @@ export class IndexComponent implements OnInit, AfterViewInit, OnDestroy {
      private deleteConfirmationService: DeleteConfirmationDialogService,
      private fb: FormBuilder,
      private searchTableService: TableSearchService,
-     private addDialogService: AppUserDialogService
+     private addDialogService: AppUserDialogService,
+     private sortHeaderService: SortHeaderService,
   ) {
     this.appUsersList$ = this.appUserService.appUsersList$;
 
@@ -64,6 +69,8 @@ export class IndexComponent implements OnInit, AfterViewInit, OnDestroy {
     this.loading$ = loadingService.isLoading$;
     this.searchControl = this.fb.control('');
     this.delayedInitializedSearch$ = this.searchTableService.query$
+
+    this.sortHeader$ = this.sortHeaderService.sortHeader$;
   }
 
   ngOnInit(): void {
@@ -89,14 +96,14 @@ export class IndexComponent implements OnInit, AfterViewInit, OnDestroy {
     this.pageNumber$.pipe(
       this.pageNumberDependentsLatestValues(),
       switchMap(
-        ([pageNumber, query, pageSize, addedUser]) =>
+        ([pageNumber, query, pageSize, addedUser, sort]) =>
         {
           this.loadingService.showLoading();
 
           const pageIndex = pageNumber;
 
           console.log("users 2", pageNumber)
-          return this.appUserService.getAppUsers(pageIndex, pageSize, query)
+          return this.appUserService.getAppUsers(pageIndex, pageSize, query, sort)
         }
       ),
       tap(_ => this.loadingService.hideLoading()),
@@ -109,13 +116,14 @@ export class IndexComponent implements OnInit, AfterViewInit, OnDestroy {
 
   }
 
-  pageNumberDependentsLatestValues(): UnaryFunction<Observable<number>, Observable<[number, string, number, AppUser]>> {
+  pageNumberDependentsLatestValues(): UnaryFunction<Observable<number>, Observable<[number, string, number, AppUser, Sort]>> {
 
     return pipe(
       withLatestFrom(
         this.delayedInitializedSearch$.pipe(startWith("-1")),
         this.pageSize$,
-        this.addDialogService.subject$.pipe(startWith({} as AppUser))
+        this.addDialogService.subject$.pipe(startWith({} as AppUser)),
+        this.sortHeader$
     ))
 
   }
@@ -124,6 +132,7 @@ export class IndexComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.InitSearchInputChangeSubscription();
     this.InitUserAddedSubscription();
+    this.InitSortHeaderChangedSubscription();
 
   }
 
@@ -140,6 +149,17 @@ export class IndexComponent implements OnInit, AfterViewInit, OnDestroy {
 
   }
 
+  InitSortHeaderChangedSubscription(): void {
+
+    this.subs.sink = this.sortHeader$
+                         .pipe(skip(1))
+                         .subscribe(_ => this.paginationService.setPageNumber(1))
+
+  }
+
+  sortChanged(sort: Sort) {
+    this.sortHeaderService.setSortHeader(sort);
+  }
 
   openAddDialog(enterAnimationDuration: string, exitAnimationDuration: string): void {
 

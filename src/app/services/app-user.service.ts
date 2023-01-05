@@ -1,9 +1,10 @@
 import { IPagination } from './../../types/base';
-import { Observable, BehaviorSubject, share, shareReplay } from 'rxjs';
+import { Observable, BehaviorSubject, share, shareReplay, Subject } from 'rxjs';
 import { environment } from './../../environments/environment';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AddAppUser, AppUser } from 'src/types/appUser';
+import { Sort } from '@angular/material/sort';
 
 @Injectable({
   providedIn: 'root'
@@ -18,23 +19,33 @@ export class AppUserService {
 
   constructor(private httpClient:  HttpClient) { }
 
-
   setUsers(users: AppUser[]) {
     this.appUsersList.next(users)
   }
 
-  getAppUsers(pageNumber: number, pageSize: number, query: string): Observable<IPagination<AppUser>>
+
+
+  getAppUsers(pageNumber: number, pageSize: number, query: string, sort: Sort): Observable<IPagination<AppUser>>
   {
+
+    const mappedDirection = this.mapDirectionToValueIfEmpty(sort);
 
     const getApptUsersUrl = this.appUsersUrl;
 
     const params = new HttpParams().set('pageNumber', pageNumber)
                                    .set('pageSize', pageSize)
                                    .set('query', query)
+                                   .set('active', sort.active)
+                                   .set('direction', mappedDirection);
 
     return this.httpClient.get<IPagination<AppUser>>(getApptUsersUrl, {params})
 
   }
+
+  private mapDirectionToValueIfEmpty(sort: Sort): string {
+    return sort.direction == ""  ?  "-1" : sort.direction
+  }
+
 
   getAppUserById(id: number): Observable<AppUser>
   {

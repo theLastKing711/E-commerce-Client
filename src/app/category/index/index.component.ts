@@ -13,12 +13,13 @@ import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 import { EnhancedSelectionModel } from 'src/app/shared/utils/EnhancedSelectionModel';
 import { Sort } from '@angular/material/sort';
+import { SortHeaderService } from 'src/app/shared/sort-header.service';
 
 @Component({
   selector: 'app-index',
   templateUrl: './index.component.html',
   styleUrls: ['./index.component.scss'],
-  providers: [PaginationService, TableSearchService]
+  providers: [PaginationService,SortHeaderService, TableSearchService]
 })
 export class IndexComponent implements OnInit, OnDestroy {
 
@@ -48,13 +49,14 @@ export class IndexComponent implements OnInit, OnDestroy {
       private alertifyService: AlertifyService,
       private paginationService: PaginationService,
       private searchTableService: TableSearchService,
+      private sortHeaderService: SortHeaderService,
     ) {
       this.pageNumber$= this.paginationService.pageNumber$;
       this.pageSize$ = this.paginationService.pageSize$;
       this.totalCount$ = this.paginationService.totalCount$;
 
       this.categoriesList$ = this.categoryService.categories$;
-      this.sortHeader$ = this.categoryService.sortHeader$;
+      this.sortHeader$ = this.sortHeaderService.sortHeader$;
 
       this.delayedInitializedSearch$ = this.searchTableService.query$;
 
@@ -185,7 +187,7 @@ export class IndexComponent implements OnInit, OnDestroy {
 
 
   sortChanged(sort: Sort) {
-    this.categoryService.setSortHeader(sort);
+    this.sortHeaderService.setSortHeader(sort);
   }
 
   openAddDialog(enterAnimationDuration: string, exitAnimationDuration: string): void {

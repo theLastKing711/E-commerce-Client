@@ -59,7 +59,7 @@ export class InvoiceService {
 
     const productsList = this.productService.getProducts(0, 0)
 
-    const usersList = this.appUserService.getAppUsers(0, 0, '')
+    const usersList = this.appUserService.getAppUsers(0, 0, '', {direction: "", active: "-1"})
 
     return forkJoin([productsList, usersList]);
 
