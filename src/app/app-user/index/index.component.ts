@@ -22,7 +22,7 @@ import { Sort } from '@angular/material/sort';
   selector: 'app-index',
   templateUrl: './index.component.html',
   styleUrls: ['./index.component.scss'],
-  providers: [PaginationService,SortHeaderService , TableSearchService]
+  providers: [PaginationService, SortHeaderService, TableSearchService]
 })
 export class IndexComponent implements OnInit, AfterViewInit, OnDestroy {
 
@@ -79,6 +79,21 @@ export class IndexComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit(): void {
     this.initPageNumberRelatedSubscriptions();
+  }
+
+  initUserDeletedSubscrption(): void {
+    this.subs.sink = this.removeUsers$.pipe(
+      switchMap((ids) => this.deleteUserDialogClosed("200", "200", "do you want to delete the selected users")
+      .pipe(
+        filter(isFormSubmitted => isFormSubmitted == true),
+        switchMap(() => this.appUserService.removeAppUsers(ids)),
+      )
+      )
+    )
+    .subscribe(() => {
+      this.alertifyService.success("user removed successfully")
+      this.paginationService.setPageNumberAfterDelete()
+    })
   }
 
   initPageNumberRelatedSubscriptions(): void {
@@ -177,21 +192,6 @@ export class IndexComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.paginationService.setPageNumber(nextPage);
 
-  }
-
-  initUserDeletedSubscrption(): void {
-    this.subs.sink = this.subs.sink =  this.removeUsers$.pipe(
-      switchMap((ids) => this.deleteUserDialogClosed("200", "200", "do you want to delete the selected users")
-      .pipe(
-        filter(isFormSubmitted => isFormSubmitted == true),
-        switchMap(() => this.appUserService.removeAppUsers(ids)),
-      )
-      )
-    )
-    .subscribe(() => {
-      this.alertifyService.success("user removed successfully")
-      this.paginationService.setPageNumberAfterDelete()
-    })
   }
 
   deleteUserDialogClosed(enterAnimationDuration: string, exitAnimationDuration: string, data: any): Observable<any> {

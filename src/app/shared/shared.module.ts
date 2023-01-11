@@ -20,8 +20,8 @@ import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-
 import { MatSortModule } from '@angular/material/sort';
 import { TableSearchComponent } from './table-search/table-search.component';
 import { SelectionTableComponent } from './selection-table/selection-table.component';
-
-
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 
 @NgModule({
   declarations: [
@@ -29,7 +29,8 @@ import { SelectionTableComponent } from './selection-table/selection-table.compo
     EmptyListComponent,
     ConfirmationDialogComponent,
     TableSearchComponent,
-    SelectionTableComponent
+    SelectionTableComponent,
+
 
   ],
   imports: [
@@ -49,6 +50,8 @@ import { SelectionTableComponent } from './selection-table/selection-table.compo
     MatCheckboxModule,
     MatRippleModule,
     MatSortModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
   ],
   exports: [
     MatToolbarModule,
@@ -71,7 +74,8 @@ import { SelectionTableComponent } from './selection-table/selection-table.compo
     TableSearchComponent,
     SelectionTableComponent,
     MatSortModule,
-
+    MatDatepickerModule,
+    MatNativeDateModule,
   ]
 })
 export class SharedModule { }

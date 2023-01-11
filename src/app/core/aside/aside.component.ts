@@ -37,6 +37,11 @@ export class AsideComponent {
         roles: [Role.Admin, Role.SalesManger]
       },
       {
+        name: "discounts",
+        path: "/discounts",
+        roles: [Role.Admin, Role.SalesManger]
+      },
+      {
         name: "stats",
         path: "/stats",
         roles: [Role.Admin, Role.SalesManger]

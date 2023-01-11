@@ -58,9 +58,17 @@ const routes: Routes = [
     }
   },
   {
+    path: 'discounts',
+    loadChildren: () => import('./discount/discount.module').then(m => m.DiscountModule),
+    canActivate: [AuthGuard, RoleGuard],
+    data: {
+      roles: AdminAndSalesManagerRoles
+    }
+  },
+  {
     path: 'authentication',
     loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule)
-  }
+  },
 ];
 
 @NgModule({
