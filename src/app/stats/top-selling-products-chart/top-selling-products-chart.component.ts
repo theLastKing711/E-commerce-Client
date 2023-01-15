@@ -26,7 +26,10 @@ export class TopSellingProductsChartComponent  {
 
   ngAfterViewInit(): void {
 
-    this.view = [this.productChartCard.nativeElement.offsetWidth, 400]
+    setTimeout(() => {
+      this.view = [this.productChartCard.nativeElement.offsetWidth, 400]
+    },0)
+
 
   }
 

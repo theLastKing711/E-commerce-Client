@@ -10,22 +10,24 @@ export class DiscountValidatorService {
 
   constructor(private discountService:  DiscountService) {}
 
-  validateDuplicateDate(id: number): AsyncValidatorFn {
+  validateDuplicateDate<T extends { productId: number, range: { startDate: Date, endDate: Date } }>(
+    control: AbstractControl<T>
+  ):
+    Promise<ValidationErrors | null> | Observable<ValidationErrors | null> {
 
-    return (control: AbstractControl<{start: Date | null, end: Date | null}>): Promise<ValidationErrors | null> | Observable<ValidationErrors | null> =>
-    {
+      console.log("controls", control)
 
-      const startDate =  control.value.start?.toLocaleDateString()
-      const endDate = control.value.end?.toLocaleDateString();
+      const productId = control?.value?.productId;
+      const startDate =  control?.value?.range?.startDate?.toLocaleDateString();
+      const endDate = control?.value?.range?.endDate?.toLocaleDateString();
 
-      console.log("control", control.value);
-
-      if(startDate == null || endDate == null)
+      if(startDate == null || endDate == null || productId == null)
       {
         return of(null)
       }
 
-      return this.discountService.checkIfDiscountDuplicated(id, startDate, endDate)
+
+      return this.discountService.checkIfDiscountDuplicated(productId, startDate, endDate)
                                   .pipe(
                                     map(message => {
                                       if(message)
@@ -38,9 +40,40 @@ export class DiscountValidatorService {
                                       }
                                     })
                                   )
-    }
 
   }
 
+  validateDuplicateDateOnUpdate<T extends { productId: number, range: { startDate: Date, endDate: Date } }>(
+    control: AbstractControl<T>
+  ):
+    Promise<ValidationErrors | null> | Observable<ValidationErrors | null> {
+
+      console.log("controls", control)
+
+      const productId = control?.value?.productId;
+      const startDate =  control?.value?.range?.startDate?.toLocaleDateString();
+      const endDate = control?.value?.range?.endDate?.toLocaleDateString();
+
+      if(startDate == null || endDate == null || productId == null)
+      {
+        return of(null)
+      }
+
+
+      return this.discountService.checkIfDiscountDuplicatedOnUpdate(productId, startDate, endDate)
+                                  .pipe(
+                                    map(message => {
+                                      if(message)
+                                      {
+                                        return {dateDuplicated: message}
+                                      }
+                                      else
+                                      {
+                                        return  null;
+                                      }
+                                    })
+                                  )
+
+  }
 
 }

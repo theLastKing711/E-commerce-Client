@@ -1,0 +1,125 @@
+
+<div class="loading" *ngIf="loading">
+  <app-loading></app-loading>
+</div>
+
+
+<div *ngIf="!loading">
+
+  <form [formGroup]="discountForm" (ngSubmit)="updatediscount()">
+
+    <div class="mt-4">
+        <mat-card class="edit-discount-card">
+
+          <mat-card-header class="d-block mb-5">
+            <h1>
+              Edit Discount
+            </h1>
+            <hr />
+          </mat-card-header>
+          <mat-card-content class="mb-4">
+
+            <div class="row">
+              <div class="col-md-4 col-sm-6">
+                <mat-form-field appearance="fill" class="mb-2">
+                  <mat-label>Select Product</mat-label>
+                  <mat-select formControlName="productId" [disabled]="true">
+                    <mat-option [value]="0">None</mat-option>
+                    <mat-option *ngFor="let product of productsList" [value]="product.id">
+                      {{ product.name }}
+                    </mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="hasError('productId', 'required')">
+                    Please select a Product
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <div class="col-md-4 col-sm-6">
+              <mat-form-field appearance="fill" class="mb-2">
+                <mat-label>value</mat-label>
+                <input
+                  matInput
+                  formControlName="value"
+                  type="number"
+                  max="100"
+                  min="0"
+                >
+                <mat-icon matPrefix>
+                  percent
+                </mat-icon>
+                <mat-error *ngIf="hasError('value', 'required')">Value is required</mat-error>
+                <mat-error *ngIf="hasError('value', 'min')">Minimum value is 0</mat-error>
+                <mat-error *ngIf="hasError('value', 'max')">Maximum value is 100</mat-error>
+              </mat-form-field>
+              </div>
+
+            <div class="col-md-4 col-sm-6">
+              <mat-form-field appearance="fill" class="mb-2" >
+                <mat-label>Enter discount date range</mat-label>
+                <mat-date-range-input [rangePicker]="picker" formGroupName="range" [disabled]="true">
+                  <input
+                    matStartDate
+                    [errorStateMatcher]="startDateErrorMatcher"
+                    placeholder="Start date"
+                    formControlName="startDate"
+                  >
+                  <input
+                    matEndDate
+                    placeholder="End date"
+                    formControlName="endDate"
+                  >
+                </mat-date-range-input>
+                <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
+                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-date-range-picker
+                  panelClass="date-picker-panel"
+                  #picker
+                >
+                </mat-date-range-picker>
+                <mat-error *ngIf="hasFormError('dateDuplicated')">
+                  {{ discountForm.errors?.["dateDuplicated"] }}
+                </mat-error>
+             </mat-form-field>
+            </div>
+          </div>
+
+
+          </mat-card-content>
+
+          <mat-card-actions>
+
+            <div class="d-flex justify-content-between card-actions">
+              <button
+                mat-raised-button
+                color="primary"
+                class="py-1 px-5"
+                type="submit"
+                [disabled]="true"
+
+              >
+              submit
+            </button>
+              <div class="d-flex card-actions">
+                <button
+                type="button"
+                mat-raised-button
+                color="warn"
+                class="py-1 px-5 delete-button"
+                (click)="removeDiscount(id)"
+                >
+                  delete
+                </button>
+                <button mat-stroked-button color="primary" class="m-0 p-0 ms-2" type="button">
+                  <a  routerLink="/discounts" class="d-block py-1 px-5 ">
+                    cancel
+                  </a>
+                </button>
+              </div>
+            </div>
+          </mat-card-actions>
+
+        </mat-card>
+    </div>
+  </form>
+</div>

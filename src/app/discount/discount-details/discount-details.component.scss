@@ -1,0 +1,41 @@
+mat-form-field {
+  width: 100%;
+}
+
+.edit-discount-card {
+
+  mat-card-actions {
+    margin-left:  0;
+    margin-right:  0;
+    padding: 0 0;
+  }
+
+
+  .card-actions {
+
+
+
+    @media screen and (max-width: 600px) {
+      flex-direction: column;
+
+    }
+
+    @media screen and (max-width: 600px) {
+      flex-direction: column;
+
+      > button {
+        margin: 0.5rem 0;
+
+      }
+
+    }
+
+    a {
+      text-decoration: none;
+    }
+
+  }
+
+}
+
+

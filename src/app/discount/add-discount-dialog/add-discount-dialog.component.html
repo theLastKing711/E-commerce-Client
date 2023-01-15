@@ -1,0 +1,77 @@
+<h1 mat-dialog-title>Add New Discount</h1>
+<form [formGroup]="discountForm" (ngSubmit)="addDiscount()">
+
+<div matDialogContent>
+
+    <mat-form-field appearance="fill" class="mb-2">
+      <mat-label>Select Product</mat-label>
+      <mat-select formControlName="productId">
+        <mat-option [value]="0">None</mat-option>
+        <mat-option *ngFor="let product of productsList" [value]="product.id">
+          {{ product.name }}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="hasError('productId', 'required')">
+        Please select a Product
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="mb-2">
+      <mat-label>value</mat-label>
+      <input
+        matInput
+        formControlName="value"
+        type="number"
+        max="100"
+        min="0"
+      >
+      <mat-icon matPrefix>
+        percent
+      </mat-icon>
+      <mat-error *ngIf="hasError('value', 'required')">Value is required</mat-error>
+      <mat-error *ngIf="hasError('value', 'min')">Minimum value is 0</mat-error>
+      <mat-error *ngIf="hasError('value', 'max')">Maximum value is 100</mat-error>
+
+    </mat-form-field>
+
+
+    <mat-form-field appearance="fill" class="mb-2" >
+      <mat-label>Enter discount date range</mat-label>
+      <mat-date-range-input [rangePicker]="picker" formGroupName="range">
+        <input
+          matStartDate
+          [errorStateMatcher]="startDateErrorMatcher"
+          placeholder="Start date"
+          formControlName="startDate"
+        >
+        <input
+          matEndDate
+          placeholder="End date"
+          formControlName="endDate"
+        >
+      </mat-date-range-input>
+      <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
+      <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-date-range-picker
+        panelClass="date-picker-panel"
+        #picker
+      >
+      </mat-date-range-picker>
+      <mat-error *ngIf="hasFormError('dateDuplicated')">
+        {{ discountForm.errors?.["dateDuplicated"] }}
+      </mat-error>
+   </mat-form-field>
+  </div>
+
+  <div mat-dialog-actions>
+    <button
+      mat-button
+      mat-dialog-close color="primay"
+      type="submit"
+    >
+    Submit
+  </button>
+
+    <button mat-button mat-dialog-close color="success" >Cancel</button>
+  </div>
+</form>

@@ -1,11 +1,11 @@
-import { CategoryDetailsComponent } from './category-details/category-details.component';
+import { DiscountDetailsComponent } from './../discount/discount-details/discount-details.component';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { IndexComponent } from './index/index.component';
 
 const routes: Routes = [
   {path: "", component: IndexComponent},
-  {path: ":id", component: CategoryDetailsComponent}
+  {path: ":id", component: DiscountDetailsComponent}
 ];
 
 @NgModule({

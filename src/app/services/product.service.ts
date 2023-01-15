@@ -73,4 +73,9 @@ export class ProductService {
     return this.httpClient.delete(removeProductUrl)
   }
 
+  getProductsList(): Observable<Product[]>{
+
+    return this.httpClient.get<Product[]>(`${this.productsUrl}list`);
+  }
+
 }

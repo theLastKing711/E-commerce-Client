@@ -51,7 +51,11 @@ export class SalesBarChartComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
 
-    this.view = [this.chartCard.nativeElement.offsetWidth, 400]
+
+    setTimeout(() => {
+      this.view = [this.chartCard.nativeElement.offsetWidth, 400]
+    }, 0)
+
 
   }
 
