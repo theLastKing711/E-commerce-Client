@@ -24,7 +24,7 @@ export class SalesBarChartComponent implements OnInit, AfterViewInit {
 
   view: any = [600, 400];
 
-  onResize(e: any) {
+  onResize(e: HTMLElement) {
 
     // const salesBarChartWidthPercent = this.calculateChartWidth(e.target.innerWidth)
 

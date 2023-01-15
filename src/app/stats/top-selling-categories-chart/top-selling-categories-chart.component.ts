@@ -29,8 +29,7 @@ export class TopSellingCategoriesChartComponent   {
 
   }
 
-  onResize(e: any) {
-
+  onResize(e: HTMLElement) {
     this.view = [ e.offsetWidth , 400]
   }
 
